@@ -21,6 +21,9 @@ public class LivroEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "isbn", length = 20, nullable = false)
+    private String isbn;
+
     @Column(name = "titulo", nullable = false, length = 100)
     private String titulo;
 
@@ -37,5 +40,22 @@ public class LivroEntity {
     @ManyToOne
     @JoinColumn(name = "autor")
     private AutorEntity autor;
+
+    @Column(name = "idioma", nullable = false)
+    private String idioma;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "formato", nullable = false)
+    private FormatoLivro formato;
+
+    @Column(name = "editora")
+    private String editora;
+
+    @Column(name = "paginas", nullable = false)
+    private Integer paginas;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusLivro status;
 
 }
