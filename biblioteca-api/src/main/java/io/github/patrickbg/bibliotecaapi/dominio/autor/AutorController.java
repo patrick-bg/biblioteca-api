@@ -2,6 +2,7 @@ package io.github.patrickbg.bibliotecaapi.dominio.autor;
 
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorForm;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class AutorController {
     private AutorService autorService;
 
     @PostMapping
-    public ResponseEntity<AutorDetalhes> criar(@RequestBody AutorForm novo){
+    public ResponseEntity<AutorDetalhes> criar(@RequestBody @Valid AutorForm novo){
         AutorDetalhes detalhes = autorService.criar(novo);
         return ResponseEntity.status(HttpStatus.CREATED).body(detalhes);
     }

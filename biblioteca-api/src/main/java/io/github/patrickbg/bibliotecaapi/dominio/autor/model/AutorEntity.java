@@ -32,7 +32,7 @@ public class AutorEntity {
     @Column(name = "genero_autor", nullable = false)
     private GeneroAutor generoAutor;
 
-    @Column(name = "pais")
+    @Column(name = "pais", nullable = false)
     private String paisOrigem;
 
     @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY)

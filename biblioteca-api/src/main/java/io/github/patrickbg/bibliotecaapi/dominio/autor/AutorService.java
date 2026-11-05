@@ -1,5 +1,6 @@
 package io.github.patrickbg.bibliotecaapi.dominio.autor;
 
+import io.github.patrickbg.bibliotecaapi.common.exceptions.ValidationException;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorForm;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.mapper.AutorMapper;
@@ -20,7 +21,11 @@ public class AutorService {
     private AutorMapper mapper;
 
     public AutorDetalhes criar(AutorForm form){
-        validator.validar(form);
+        var result = validator.validar(form);
+
+        if(result.isInvalido()){
+            throw new ValidationException(result.getCamposInvalidos());
+        }
         AutorEntity entity = mapper.toEntity(form);
         autorRepository.save(entity);
         return mapper.toDetalhes(entity);
