@@ -1,5 +1,6 @@
 package io.github.patrickbg.bibliotecaapi.dominio.autor;
 
+import io.github.patrickbg.bibliotecaapi.common.exceptions.RegistroNaoEncontradoException;
 import io.github.patrickbg.bibliotecaapi.common.exceptions.ValidationException;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorForm;
@@ -7,6 +8,8 @@ import io.github.patrickbg.bibliotecaapi.dominio.autor.mapper.AutorMapper;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.model.AutorEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class AutorService {
@@ -29,5 +32,11 @@ public class AutorService {
         AutorEntity entity = mapper.toEntity(form);
         autorRepository.save(entity);
         return mapper.toDetalhes(entity);
+    }
+
+    public AutorDetalhes obterDetalhes(UUID id){
+        return autorRepository.findById(id)
+                .map(mapper::toDetalhes)
+                .orElseThrow(RegistroNaoEncontradoException::new);
     }
 }

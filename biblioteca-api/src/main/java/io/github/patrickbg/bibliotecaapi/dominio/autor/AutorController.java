@@ -6,10 +6,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("autores")
@@ -22,5 +21,11 @@ public class AutorController {
     public ResponseEntity<AutorDetalhes> criar(@RequestBody @Valid AutorForm novo){
         AutorDetalhes detalhes = autorService.criar(novo);
         return ResponseEntity.status(HttpStatus.CREATED).body(detalhes);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<AutorDetalhes> obterDetalhes(@PathVariable UUID id){
+        var result = autorService.obterDetalhes(id);
+        return ResponseEntity.ok(result);
     }
 }

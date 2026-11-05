@@ -1,5 +1,6 @@
 package io.github.patrickbg.bibliotecaapi.infra.handlers;
 
+import io.github.patrickbg.bibliotecaapi.common.exceptions.RegistroNaoEncontradoException;
 import io.github.patrickbg.bibliotecaapi.common.exceptions.ValidationException;
 import io.github.patrickbg.bibliotecaapi.common.validation.CampoInvalido;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorForm;
@@ -45,4 +46,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(body);
     }
+
+    @ExceptionHandler(RegistroNaoEncontradoException.class)
+    public ResponseEntity<?> handleRegistroNaoEncontradoException(RegistroNaoEncontradoException e){
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", HttpStatus.NOT_FOUND.value(),
+                "error", e.getMessage(),
+                "message", e.getMessage())
+        );
+    }
+
 }
