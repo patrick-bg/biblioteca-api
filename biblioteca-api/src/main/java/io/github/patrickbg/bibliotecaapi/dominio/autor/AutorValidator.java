@@ -6,16 +6,19 @@ import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class AutorValidator {
 
     @Autowired
     private AutorRepository autorRepository;
 
-    public ValidationResult validar(AutorForm form){
+    public ValidationResult validar(AutorForm form, UUID id){
         var result = ValidationResult.novo();
 
-        if(autorRepository.findByNome(form.nome()).isPresent()){
+        var isListaNaoVazia =!autorRepository.findByNomeAndNotId(form.nome(), id).isEmpty();
+        if(isListaNaoVazia){
             result.add(new CampoInvalido("nome", "Já cadastrado."));
         }
 

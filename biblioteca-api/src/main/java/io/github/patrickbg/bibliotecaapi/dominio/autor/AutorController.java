@@ -28,4 +28,10 @@ public class AutorController {
         var result = autorService.obterDetalhes(id);
         return ResponseEntity.ok(result);
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Void> atualizar(@PathVariable UUID id, @RequestBody @Valid AutorForm dadosAtualizados){
+        autorService.atualizar(id, dadosAtualizados);
+        return ResponseEntity.noContent().build();
+    }
 }
