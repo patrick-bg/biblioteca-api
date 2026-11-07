@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("autores")
+@CrossOrigin("*")
 public class AutorController {
 
     @Autowired

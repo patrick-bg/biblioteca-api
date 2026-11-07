@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AutorService } from '../autor-service';
+import { DadosAutorForm, DetalhesAutor } from '../dados-autor';
 
 interface CadastroAutorForm{
   nome: FormControl<string>;
@@ -17,6 +19,7 @@ interface CadastroAutorForm{
 export class CadastroAutor implements OnInit {
 
   form!: FormGroup<CadastroAutorForm>;
+  service = inject(AutorService);
 
   ngOnInit(): void {
     this.form = new FormGroup<CadastroAutorForm>({
@@ -29,5 +32,12 @@ export class CadastroAutor implements OnInit {
 
   handleSubmit(){
     console.log(this.form.value);
+    const dadosAutor = this.form.value as DadosAutorForm;
+    this.service.criar(dadosAutor).subscribe({
+      next: (response: DetalhesAutor) =>{
+        console.log('recebendo a resposta do servidor', response);
+      },
+      error: (error) => console.log('ocorreu um erro: ', error)
+    });
   }
 }
