@@ -8,6 +8,8 @@ import io.github.patrickbg.bibliotecaapi.dominio.autor.mapper.AutorMapper;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.model.AutorEntity;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -51,5 +53,9 @@ public class AutorService {
 
         mapper.update(entity, dadosAtualizados);
         autorRepository.save(entity);
+    }
+
+    public Page<AutorDetalhes> listar (PageRequest pageRequest){
+        return autorRepository.findAll(pageRequest).map(mapper::toDetalhes);
     }
 }
