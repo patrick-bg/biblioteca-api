@@ -2,6 +2,9 @@ import { Component, OnInit, inject} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AutorService } from '../autor-service';
 import { DadosAutorForm, DetalhesAutor } from '../dados-autor';
+import { ValidationErrorResponse } from '../../common/validation/validation-error-model';
+import { CommonModule } from '@angular/common';
+import { retry } from 'rxjs';
 
 interface CadastroAutorForm{
   nome: FormControl<string>;
@@ -12,7 +15,7 @@ interface CadastroAutorForm{
 
 @Component({
   selector: 'app-cadastro-autor',
-  imports: [ ReactiveFormsModule ],
+  imports: [ ReactiveFormsModule, CommonModule ],
   templateUrl: './cadastro-autor.html',
   styleUrl: './cadastro-autor.scss',
 })
@@ -30,14 +33,44 @@ export class CadastroAutor implements OnInit {
     });
   }
 
+  isFormInvalid() : boolean{
+    if(this.form.invalid){
+      this.form.markAllAsTouched();
+      return true;
+    }
+    return false;
+  }
+
   handleSubmit(){
+    if(this.isFormInvalid()){
+      return;
+    }
+
     console.log(this.form.value);
     const dadosAutor = this.form.value as DadosAutorForm;
     this.service.criar(dadosAutor).subscribe({
       next: (response: DetalhesAutor) =>{
         console.log('recebendo a resposta do servidor', response);
       },
-      error: (error) => console.log('ocorreu um erro: ', error)
+      error: (error) => this.onApiError(error)
     });
   }
+
+  private aplicarErrosValidacao(error: ValidationErrorResponse){
+    error.camposInvalidos.forEach( ci => {
+      const control = this.form.get(ci.campo);
+      if(control){
+        control.setErrors({apiError: ci.erro});
+        control.markAsTouched();
+      }
+    });
+  }
+
+  private onApiError(response: any) : void{
+    if(response.status === 422){
+      this.aplicarErrosValidacao(response.error)
+      return;
+    }
+  }
+  
 }
