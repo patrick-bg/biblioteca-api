@@ -1,0 +1,50 @@
+<header class="header">
+    <h1>Autores</h1>
+    <div class="user-area">
+        <span class="user-name">Olá, usuário</span>
+        <i class="fa-solid fa-circle-user"></i>
+    </div>
+</header>
+
+<main class="content">
+    <div class="card-full">
+        <div class="table-card">
+            
+            @if (listagem$ | async; as listagem) {
+                <table class="datatable">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Genero</th>
+                            <th>Idade</th>
+                            <th>País</th>
+                            <th >Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @for (autor of listagem.content; track autor.id) {
+                            <tr>
+                                <td> {{ autor.nome }}</td>
+                                <td> {{ autor.generoAutor }}</td>
+                                <td> {{ calcularIdade(autor.dataNascimento) }} anos</td>
+                                <td> {{ autor.paisOrigem }}</td>
+                                
+                                <td >
+                                    <button class="icon-btn">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button class="icon-btn danger">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</main>
