@@ -4,7 +4,7 @@ import { AutorService } from '../autor-service';
 import { DadosAutorForm, DetalhesAutor } from '../dados-autor';
 import { ValidationErrorResponse } from '../../common/validation/validation-error-model';
 import { CommonModule } from '@angular/common';
-import { retry } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 interface CadastroAutorForm{
   nome: FormControl<string>;
@@ -23,6 +23,7 @@ export class CadastroAutor implements OnInit {
 
   form!: FormGroup<CadastroAutorForm>;
   service = inject(AutorService);
+  toast = inject(ToastrService);
 
   ngOnInit(): void {
     this.form = new FormGroup<CadastroAutorForm>({
@@ -36,6 +37,8 @@ export class CadastroAutor implements OnInit {
   isFormInvalid() : boolean{
     if(this.form.invalid){
       this.form.markAllAsTouched();
+      this.toast.error('Erro de validação. Verifique os valores informados.');
+
       return true;
     }
     return false;
@@ -51,6 +54,7 @@ export class CadastroAutor implements OnInit {
     this.service.criar(dadosAutor).subscribe({
       next: (response: DetalhesAutor) =>{
         console.log('recebendo a resposta do servidor', response);
+        this.toast.success('Autor cadastrado/atualizado com sucesso.')
       },
       error: (error) => this.onApiError(error)
     });
@@ -68,9 +72,12 @@ export class CadastroAutor implements OnInit {
 
   private onApiError(response: any) : void{
     if(response.status === 422){
-      this.aplicarErrosValidacao(response.error)
+      this.aplicarErrosValidacao(response.error);
+      this.toast.error('Erro de validação. Verifique os valores informados.');
       return;
     }
+    this.toast.error('Ocorreu um erro ao processar a requisição.');
+    console.error(response.error);
   }
   
 }
