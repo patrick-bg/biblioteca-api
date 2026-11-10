@@ -4,6 +4,6 @@ export interface PageResult<T> {
     totalElements: number;
     number: number;
     size: number;
-    firts: boolean;
+    first: boolean;
     last: boolean;
 }
