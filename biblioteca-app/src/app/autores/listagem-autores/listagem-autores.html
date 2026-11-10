@@ -25,10 +25,16 @@
                     <tbody>
 
                         @for (autor of listagem.content; track autor.id) {
-                            <tr>
+                            <tr >
                                 <td> {{ autor.nome }}</td>
                                 <td> {{ autor.generoAutor }}</td>
-                                <td> {{ calcularIdade(autor.dataNascimento) }} anos</td>
+                                <td> {{ calcularIdade(autor.dataNascimento, autor.dataFalecimento) }} anos
+                                @if(autor.dataFalecimento){
+                                    <span class="fa-solid fa-cross" 
+                                        title="Falecido em {{ autor.dataFalecimento | date: 'dd/MM/yyyy' }}">
+                                    </span>
+                                }
+                                </td>
                                 <td> {{ autor.paisOrigem }}</td>
                                 
                                 <td >

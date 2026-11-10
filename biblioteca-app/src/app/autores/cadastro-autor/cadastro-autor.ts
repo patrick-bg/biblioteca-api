@@ -1,14 +1,16 @@
 import { Component, OnInit, inject} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AutorService } from '../autor-service';
-import { DadosAutorForm, DetalhesAutor } from '../dados-autor';
+import { DadosAutorForm, DetalhesAutor, StatusAutor } from '../dados-autor';
 import { ValidationErrorResponse } from '../../common/validation/validation-error-model';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 
 interface CadastroAutorForm{
   nome: FormControl<string>;
+  statusAutor: FormControl<StatusAutor | ''>;
   dataNascimento: FormControl<string>;
+  dataFalecimento: FormControl<string>;
   generoAutor: FormControl<string>;
   paisOrigem: FormControl<string>;
 }
@@ -28,10 +30,16 @@ export class CadastroAutor implements OnInit {
   ngOnInit(): void {
     this.form = new FormGroup<CadastroAutorForm>({
       nome: new FormControl<string>('', {nonNullable: true, validators: Validators.required }),
+      statusAutor: new FormControl<StatusAutor | ''>('', {nonNullable: true, validators: Validators.required}),
       dataNascimento: new FormControl<string>('', {nonNullable: true, validators: Validators.required }),
+      dataFalecimento: new FormControl<string>('', {nonNullable: true}),
       generoAutor: new FormControl<string> ('', {nonNullable: true, validators: Validators.required}),
       paisOrigem: new FormControl<string>('', {nonNullable: true, validators: Validators.required})
     });
+  }
+
+  isFalecido() : boolean {
+    return this.form.controls.statusAutor.value === 'FALECIDO';
   }
 
   isFormInvalid() : boolean{

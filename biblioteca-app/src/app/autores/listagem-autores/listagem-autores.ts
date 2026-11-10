@@ -63,20 +63,26 @@ export class ListagemAutores implements OnInit{
     return Math.min( (listagem.number + 1) * listagem.size, listagem.totalElements);
   }
 
-  calcularIdade(dataNascimento: Date) : number {
+  calcularIdade(dataNascimento: string|Date, dataFalecimento?: string | Date ) : number {
     if(!dataNascimento){
       return 0;
     }
 
-    const hoje = new Date();
-    const nascimento = new Date(dataNascimento);
+    const nascimento = dataNascimento instanceof Date ? dataNascimento : new Date(dataNascimento);
+    let dataFim = new Date();
 
-    let idade = hoje.getFullYear() - nascimento.getFullYear();
-    const mes = hoje.getMonth() - nascimento.getMonth();
+    if(dataFalecimento){
+      dataFim = dataFalecimento instanceof Date ? dataFalecimento: new Date(dataFalecimento);
+    }
 
-    if(mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())){
+    let idade = dataFim.getFullYear() - nascimento.getFullYear();
+    const mes = dataFim.getMonth() - nascimento.getMonth();
+
+    if(mes < 0 || (mes === 0 && dataFim.getDate() < nascimento.getDate())){
       idade--;
     }
     return idade;
   }
+
+
 }

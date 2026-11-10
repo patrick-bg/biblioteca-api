@@ -35,14 +35,6 @@
             </div>
 
             <div class="form-group">
-                <label for="dataNascimento">Data Nascimento: *</label>
-                <input 
-                    formControlName="dataNascimento"  
-                    type="date" id="dataNascimento" 
-                    name="dataNascimento" >
-            </div>
-
-            <div class="form-group">
                 <label for="generoAutor">Genero do Autor(a): *</label>
                 <select formControlName="generoAutor">
                     <option value="">Selecione...</option>
@@ -63,6 +55,66 @@
                     </span>
                 }
             </div>
+
+            <div class="form-group">
+                <label for="statusAutor">Status do Autor(a): *</label>
+                <select formControlName="statusAutor">
+                    <option value="">Selecione...</option>
+                    <option value="VIVO">Vivo</option>
+                    <option value="FALECIDO">Falecido</option>            
+                </select>
+
+                @if (form.controls.statusAutor.hasError('required') && form.controls.statusAutor.touched) {
+                    <span class="form-hint form-hint-error">
+                        O status do autor(a) é obrigatório.
+                    </span>
+                }
+
+                @if (form.controls.statusAutor.hasError('apiError')&& form.controls.statusAutor.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{form.get('statusAutor')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="dataNascimento">Data do nascimento do autor(a): *</label>
+                <input 
+                    formControlName="dataNascimento"  
+                    type="date" id="dataNascimento" 
+                    name="dataNascimento" >
+                @if(form.controls.dataNascimento.hasError('required') && 
+                    form.controls.dataNascimento.touched){
+                    <span class="form-hint form-hint-error">A data é obrigatória.</span>
+                }
+
+                @if(form.controls.dataNascimento.hasError('apiError') &&
+                 form.controls.dataNascimento.touched){
+                    <span class="form-hint form-hint-error">
+                        {{form.get('dataNascimento')?.errors?.['apiError'] }}</span>
+                }
+            </div>
+
+            @if(isFalecido()){
+                <div class="form-group">
+                    <label for="dataFalecimento">Data do falecimento do autor(a): *</label>
+                    <input 
+                        formControlName="dataFalecimento"  
+                        type="date" id="dataFalecimento" 
+                        name="dataFalecimento">
+                    @if(form.controls.dataFalecimento.hasError('required') && 
+                        form.controls.dataFalecimento.touched){
+                        <span class="form-hint form-hint-error">A data é obrigatória.</span>
+                    }
+
+                    @if(form.controls.dataFalecimento.hasError('apiError') &&
+                    form.controls.dataFalecimento.touched){
+                        <span class="form-hint form-hint-error">
+                            {{form.get('dataFalecimento')?.errors?.['apiError'] }}</span>
+                    }
+                </div>
+            }
+            
 
             <div class="form-group">
                 <label for="paisOrigem">País de Origem: *</label>

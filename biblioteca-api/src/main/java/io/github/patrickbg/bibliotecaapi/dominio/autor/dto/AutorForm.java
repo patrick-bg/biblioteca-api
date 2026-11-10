@@ -1,6 +1,7 @@
 package io.github.patrickbg.bibliotecaapi.dominio.autor.dto;
 
 import io.github.patrickbg.bibliotecaapi.dominio.autor.model.GeneroAutor;
+import io.github.patrickbg.bibliotecaapi.dominio.autor.model.StatusAutor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -13,6 +14,9 @@ public record AutorForm(
         GeneroAutor generoAutor,
         @NotNull(message = "Campo obrigatório.")
         LocalDate dataNascimento,
+        @NotNull(message = "Campo obrigatório.")
+        StatusAutor statusAutor,
+        LocalDate dataFalecimento,
         @NotNull(message = "Campo obrigatório.")
         String paisOrigem) {
 }

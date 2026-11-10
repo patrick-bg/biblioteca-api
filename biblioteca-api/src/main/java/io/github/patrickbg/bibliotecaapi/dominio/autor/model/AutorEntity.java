@@ -29,6 +29,13 @@ public class AutorEntity {
     private LocalDate dataNascimento;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status_autor", nullable = false)
+    private StatusAutor statusAutor;
+
+    @Column(name = "data_falecimento")
+    private LocalDate dataFalecimento;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "genero_autor", nullable = false)
     private GeneroAutor generoAutor;
 
