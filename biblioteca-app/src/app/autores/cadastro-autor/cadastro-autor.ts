@@ -5,6 +5,8 @@ import { DadosAutorForm, DetalhesAutor, StatusAutor } from '../dados-autor';
 import { ValidationErrorResponse } from '../../common/validation/validation-error-model';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
 
 interface CadastroAutorForm{
   nome: FormControl<string>;
@@ -24,8 +26,10 @@ interface CadastroAutorForm{
 export class CadastroAutor implements OnInit {
 
   form!: FormGroup<CadastroAutorForm>;
+  rotaAtiva = inject (ActivatedRoute);
   service = inject(AutorService);
   toast = inject(ToastrService);
+  idAutorEdicao?: string | null;
 
   ngOnInit(): void {
     this.form = new FormGroup<CadastroAutorForm>({
@@ -35,6 +39,30 @@ export class CadastroAutor implements OnInit {
       dataFalecimento: new FormControl<string>('', {nonNullable: true}),
       generoAutor: new FormControl<string> ('', {nonNullable: true, validators: Validators.required}),
       paisOrigem: new FormControl<string>('', {nonNullable: true, validators: Validators.required})
+    });
+
+    this.carregarDadosParaEdicao();
+  }
+
+  carregarDadosParaEdicao(){
+    this.idAutorEdicao = this.rotaAtiva.snapshot.queryParamMap.get('id')
+
+    if(!this.idAutorEdicao){
+      return;
+    }
+
+    this.service.obterPorId(this.idAutorEdicao).subscribe({
+      next: (autor) => {
+        this.form.patchValue({
+          nome: autor.nome,
+          statusAutor: autor.statusAutor as "" | StatusAutor,
+          dataNascimento: autor.dataNascimento ? new Date(autor.dataNascimento).toISOString().split('T')[0] : '',
+          dataFalecimento: autor.dataFalecimento ? new Date(autor.dataFalecimento).toISOString().split('T')[0] : '',
+          generoAutor: autor.generoAutor,
+          paisOrigem: autor.paisOrigem
+        });
+      },
+      error: () => this.toast.error('Erro ao carregar os dados do autor.')
     });
   }
 
@@ -54,14 +82,17 @@ export class CadastroAutor implements OnInit {
 
   handleSubmit(){
     if(this.isFormInvalid()){
+      console.log('Form inválido');
       return;
     }
-
-    console.log(this.form.value);
     const dadosAutor = this.form.value as DadosAutorForm;
-    this.service.criar(dadosAutor).subscribe({
-      next: (response: DetalhesAutor) =>{
-        console.log('recebendo a resposta do servidor', response);
+
+    const requisicao : Observable<DetalhesAutor | void > = this.idAutorEdicao ?
+      this.service.atualizar(this.idAutorEdicao,dadosAutor) : 
+      this.service.criar(dadosAutor);
+    
+    requisicao.subscribe({
+      next: (response) =>{
         this.toast.success('Autor cadastrado/atualizado com sucesso.')
       },
       error: (error) => this.onApiError(error)

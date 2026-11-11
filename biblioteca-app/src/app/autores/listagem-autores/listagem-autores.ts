@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { PageResult } from '../../common/pagination/page-result';
 import { DetalhesAutor } from '../dados-autor';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-listagem-autores',
@@ -14,6 +15,7 @@ import { CommonModule } from '@angular/common';
 export class ListagemAutores implements OnInit{
 
   service = inject(AutorService);
+  router = inject(Router);
   listagem$! : Observable<PageResult<DetalhesAutor>>; 
   paginaAtual = 0;
   tamanhoPagina = 10;
@@ -82,6 +84,14 @@ export class ListagemAutores implements OnInit{
       idade--;
     }
     return idade;
+  }
+
+  prepararEdicao(idAutor : string){
+    this.router.navigate(['/paginas/cadastro-autores'], {
+      queryParams:{
+        id: idAutor
+      }
+    });
   }
 
 

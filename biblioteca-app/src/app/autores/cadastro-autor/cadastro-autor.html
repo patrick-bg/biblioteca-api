@@ -9,7 +9,7 @@
 
 <main class="content">
     <div class="card">
-        <h2>Novo Autor</h2>
+        <h2>{{ idAutorEdicao ? 'Edição de Autor' : 'Novo Autor'}}</h2>
 
         <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="form">
             <div class="form-group">
@@ -126,7 +126,8 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-primary">Salvar</button>
+                <button type="submit" class="btn-primary">
+                    {{idAutorEdicao ? 'Atualizar' : 'Salvar'}}</button>
                 <button type="button" class="btn-secondary">Cancelar</button>
             </div>
 
