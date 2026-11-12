@@ -29,4 +29,8 @@ export class AutorService {
     return this.http.put<void>(`${this.baseUrl}/${id}`, dados);
   }
 
+  deletar(id: string) : Observable<void>{
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
 }

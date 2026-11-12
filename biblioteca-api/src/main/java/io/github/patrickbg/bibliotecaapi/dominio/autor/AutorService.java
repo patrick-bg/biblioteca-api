@@ -58,4 +58,9 @@ public class AutorService {
     public Page<AutorDetalhes> listar (PageRequest pageRequest){
         return autorRepository.findAll(pageRequest).map(mapper::toDetalhes);
     }
+
+    public void deletar(UUID id){
+        var autor = autorRepository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        autorRepository.delete(autor);
+    }
 }

@@ -4,11 +4,12 @@ import { Observable } from 'rxjs';
 import { PageResult } from '../../common/pagination/page-result';
 import { DetalhesAutor } from '../dados-autor';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-listagem-autores',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, RouterModule],
   templateUrl: './listagem-autores.html',
   styleUrl: './listagem-autores.scss',
 })
@@ -16,6 +17,7 @@ export class ListagemAutores implements OnInit{
 
   service = inject(AutorService);
   router = inject(Router);
+  toast = inject(ToastrService);
   listagem$! : Observable<PageResult<DetalhesAutor>>; 
   paginaAtual = 0;
   tamanhoPagina = 10;
@@ -26,6 +28,16 @@ export class ListagemAutores implements OnInit{
 
   listarAutores(){
     this.listagem$ = this.service.listar(this.paginaAtual, this.tamanhoPagina);
+  }
+
+  deletar(id:string) : void{
+    this.service.deletar(id).subscribe({
+      next: () => {
+        this.toast.success('Autor excluído com sucesso.');
+        this.listarAutores();
+      },
+      error: () => this.toast.error('Erro ao excluir o autor.')
+    });
   }
 
   navegar(pagina : number) {

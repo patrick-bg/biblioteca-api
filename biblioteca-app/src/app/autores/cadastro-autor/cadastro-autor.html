@@ -128,7 +128,12 @@
             <div class="form-actions">
                 <button type="submit" class="btn-primary">
                     {{idAutorEdicao ? 'Atualizar' : 'Salvar'}}</button>
-                <button type="button" class="btn-secondary">Cancelar</button>
+                <button type="button" 
+                        class="btn-secondary"
+                        [routerLink]="['/paginas/listagem-autores']"
+                        >
+                    Cancelar
+                </button>
             </div>
 
         </form>

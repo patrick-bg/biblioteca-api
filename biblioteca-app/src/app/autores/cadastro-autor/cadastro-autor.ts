@@ -5,7 +5,7 @@ import { DadosAutorForm, DetalhesAutor, StatusAutor } from '../dados-autor';
 import { ValidationErrorResponse } from '../../common/validation/validation-error-model';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 
 interface CadastroAutorForm{
@@ -19,7 +19,7 @@ interface CadastroAutorForm{
 
 @Component({
   selector: 'app-cadastro-autor',
-  imports: [ ReactiveFormsModule, CommonModule ],
+  imports: [ ReactiveFormsModule, CommonModule, RouterModule ],
   templateUrl: './cadastro-autor.html',
   styleUrl: './cadastro-autor.scss',
 })
@@ -93,7 +93,9 @@ export class CadastroAutor implements OnInit {
     
     requisicao.subscribe({
       next: (response) =>{
-        this.toast.success('Autor cadastrado/atualizado com sucesso.')
+        this.toast.success('Autor cadastrado/atualizado com sucesso.');
+        this.form.reset();
+        this.idAutorEdicao = null;
       },
       error: (error) => this.onApiError(error)
     });

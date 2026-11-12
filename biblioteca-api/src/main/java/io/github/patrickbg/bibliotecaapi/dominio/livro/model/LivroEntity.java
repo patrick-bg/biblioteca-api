@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,18 +29,18 @@ public class LivroEntity {
     @Column(name = "titulo", nullable = false, length = 100)
     private String titulo;
 
-    @Column(name = "data_publicacao")
+    @Column(name = "data_publicacao", nullable = false)
     private LocalDate dataPublicacao;
 
-    @Column(name = "genero")
+    @Column(name = "genero", nullable = false)
     @Enumerated(EnumType.STRING)
     private GeneroLivro genero;
 
-    @Column(name = "preco")
+    @Column(name = "preco", nullable = false, precision = 15, scale = 2)
     private BigDecimal preco;
 
     @ManyToOne
-    @JoinColumn(name = "autor")
+    @JoinColumn(name = "autor", nullable = false)
     private AutorEntity autor;
 
     @Column(name = "idioma", nullable = false)
@@ -48,14 +50,33 @@ public class LivroEntity {
     @Column(name = "formato", nullable = false)
     private FormatoLivro formato;
 
-    @Column(name = "editora")
+    @Column(name = "editora", nullable = false)
     private String editora;
 
-    @Column(name = "paginas", nullable = false)
-    private Integer paginas;
+    @Column(name = "paginasTotais", nullable = false)
+    private Integer paginasTotais;
+
+    @Column(name = "paginasLidas")
+    private Integer paginasLidas = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private StatusLivro status;
+
+    @Column(name = "data_atualizacao")
+    private LocalDate dataAtualizacao;
+
+    @Column(name = "tipoCapa")
+    private String tipoCapa;
+
+    @Basic(fetch = FetchType.LAZY)
+    @JdbcTypeCode(SqlTypes.VARBINARY)
+    @Column(name = "capa")
+    private byte[] capa;
+
+    @PrePersist
+    public void prePersist(){
+        setDataAtualizacao(LocalDate.now());
+    }
 
 }

@@ -47,4 +47,10 @@ public class AutorController {
         var pageRequest = PageRequest.of(page, size);
         return autorService.listar(pageRequest);
     }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar (@PathVariable UUID id){
+        autorService.deletar(id);
+    }
 }
