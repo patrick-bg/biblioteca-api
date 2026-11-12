@@ -21,7 +21,8 @@ public class LivroController {
     private LivroService livroService;
 
     @PostMapping
-    public ResponseEntity<LivroDetalhes> criar(@RequestBody @Valid LivroForm novoLivro){
+    public ResponseEntity<LivroDetalhes> criar(
+            @RequestBody @Valid LivroForm novoLivro){
         LivroDetalhes detalhes = livroService.criar(novoLivro);
         return ResponseEntity.status(HttpStatus.CREATED).body(detalhes);
     }
@@ -38,6 +39,7 @@ public class LivroController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping
     public Page<LivroDetalhes> listar (
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10")int size){

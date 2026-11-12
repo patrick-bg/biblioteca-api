@@ -1,11 +1,13 @@
 package io.github.patrickbg.bibliotecaapi.dominio.autor;
 
+import io.github.patrickbg.bibliotecaapi.common.exceptions.OperacaoNaoPermitidaException;
 import io.github.patrickbg.bibliotecaapi.common.exceptions.RegistroNaoEncontradoException;
 import io.github.patrickbg.bibliotecaapi.common.exceptions.ValidationException;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorForm;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.mapper.AutorMapper;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.model.AutorEntity;
+import io.github.patrickbg.bibliotecaapi.dominio.livro.LivroRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,9 @@ public class AutorService {
 
     @Autowired
     private AutorRepository autorRepository;
+
+    @Autowired
+    private LivroRepository livroRepository;
 
     @Autowired
     private AutorValidator validator;
@@ -61,6 +66,9 @@ public class AutorService {
 
     public void deletar(UUID id){
         var autor = autorRepository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        if(livroRepository.existsByAutorId(id)){
+            throw new OperacaoNaoPermitidaException("Não é possível excluir um autor que possui livros cadastrados.");
+        }
         autorRepository.delete(autor);
     }
 }

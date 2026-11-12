@@ -40,11 +40,12 @@ public class LivroEntity {
     private BigDecimal preco;
 
     @ManyToOne
-    @JoinColumn(name = "autor", nullable = false)
+    @JoinColumn(name = "autor_id", nullable = false)
     private AutorEntity autor;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "idioma", nullable = false)
-    private String idioma;
+    private IdiomaLivro idioma;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "formato", nullable = false)
@@ -53,10 +54,10 @@ public class LivroEntity {
     @Column(name = "editora", nullable = false)
     private String editora;
 
-    @Column(name = "paginasTotais", nullable = false)
+    @Column(name = "paginas_totais", nullable = false)
     private Integer paginasTotais;
 
-    @Column(name = "paginasLidas")
+    @Column(name = "paginas_lidas")
     private Integer paginasLidas = 0;
 
     @Enumerated(EnumType.STRING)
@@ -75,6 +76,7 @@ public class LivroEntity {
     private byte[] capa;
 
     @PrePersist
+    @PreUpdate
     public void prePersist(){
         setDataAtualizacao(LocalDate.now());
     }

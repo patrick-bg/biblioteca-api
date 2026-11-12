@@ -2,6 +2,8 @@ package io.github.patrickbg.bibliotecaapi.dominio.livro;
 
 import io.github.patrickbg.bibliotecaapi.common.exceptions.RegistroNaoEncontradoException;
 import io.github.patrickbg.bibliotecaapi.common.exceptions.ValidationException;
+import io.github.patrickbg.bibliotecaapi.dominio.autor.AutorRepository;
+import io.github.patrickbg.bibliotecaapi.dominio.autor.model.AutorEntity;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroForm;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.mapper.LivroMapper;
@@ -24,17 +26,27 @@ public class LivroService {
     private LivroMapper livroMapper;
 
     @Autowired
+    private AutorRepository autorRepository;
+
+    @Autowired
     private LivroValidator livroValidator;
 
     public LivroDetalhes criar (LivroForm livroForm){
-        var result = livroValidator.validar(livroForm, null);
+
+        AutorEntity autor = null;
+        if(livroForm.autorId() != null){
+            autor = autorRepository.findById(livroForm.autorId()).orElseThrow(RegistroNaoEncontradoException::new);
+        }
+
+        var result = livroValidator.validar(livroForm, autor);
 
         if(result.isInvalido()){
             throw new ValidationException(result.getCamposInvalidos());
         }
 
-        LivroEntity entity = livroMapper.toEntity(livroForm);
+        LivroEntity entity = livroMapper.toEntity(livroForm,autor);
         livroRepository.save(entity);
+
         return livroMapper.toDetalhes(entity);
     }
 
@@ -45,8 +57,12 @@ public class LivroService {
     }
 
     public void atualizar(UUID id, @Valid LivroForm livroAtualizado){
+        AutorEntity autor = null;
+        if(livroAtualizado.autorId() != null){
+            autor = autorRepository.findById(livroAtualizado.autorId()).orElse(null);
+        }
         var entity = livroRepository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
-        var result = livroValidator.validar(livroAtualizado, id);
+        var result = livroValidator.validar(livroAtualizado, autor);
 
         if(result.isInvalido()){
             throw new ValidationException(result.getCamposInvalidos());

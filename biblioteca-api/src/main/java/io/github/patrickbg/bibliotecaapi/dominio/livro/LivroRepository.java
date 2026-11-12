@@ -20,4 +20,6 @@ public interface LivroRepository extends JpaRepository<LivroEntity, UUID> {
         and l.titulo = :titulo
 """)
     List<LivroEntity> findByTituloAndNotId(@Param("titulo") String titulo, @Param("id") UUID id);
+
+    boolean existsByAutorId(UUID id);
 }

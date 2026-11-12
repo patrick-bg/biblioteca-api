@@ -1,5 +1,6 @@
 package io.github.patrickbg.bibliotecaapi.infra.handlers;
 
+import io.github.patrickbg.bibliotecaapi.common.exceptions.OperacaoNaoPermitidaException;
 import io.github.patrickbg.bibliotecaapi.common.exceptions.RegistroNaoEncontradoException;
 import io.github.patrickbg.bibliotecaapi.common.exceptions.ValidationException;
 import io.github.patrickbg.bibliotecaapi.common.validation.CampoInvalido;
@@ -56,6 +57,18 @@ public class GlobalExceptionHandler {
                 "error", e.getMessage(),
                 "message", e.getMessage())
         );
+    }
+
+    @ExceptionHandler(OperacaoNaoPermitidaException.class)
+    public ResponseEntity<?> handleOperacaoNaoPermitidaException(OperacaoNaoPermitidaException e){
+        var status = HttpStatus.UNPROCESSABLE_CONTENT;
+        var body = Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", status.value(),
+                "error", e.getMessage(),
+                "message", e.getMessage());
+
+        return ResponseEntity.status(status).body(body);
     }
 
 }

@@ -2,6 +2,7 @@ package io.github.patrickbg.bibliotecaapi.dominio.livro.dto;
 
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.FormatoLivro;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.GeneroLivro;
+import io.github.patrickbg.bibliotecaapi.dominio.livro.model.IdiomaLivro;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.StatusLivro;
 
 import java.math.BigDecimal;
@@ -14,7 +15,7 @@ public record LivroDetalhes(
         LocalDate dataPublicacao,
         GeneroLivro genero,
         BigDecimal preco,
-        String idioma,
+        IdiomaLivro idioma,
         FormatoLivro formato,
         String editora,
         Integer paginasTotais,
