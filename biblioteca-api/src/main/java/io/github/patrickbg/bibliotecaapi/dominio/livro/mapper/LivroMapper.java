@@ -11,7 +11,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface LivroMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "autor", ignore = true)
+    @Mapping(target = "autor", source = "autor")
     LivroEntity toEntity(LivroForm form, AutorEntity autor);
 
     @Mapping(target = "autorNome", source = "autor.nome")

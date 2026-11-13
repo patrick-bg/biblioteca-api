@@ -21,6 +21,7 @@ public record LivroDetalhes(
         Integer paginasTotais,
         Integer paginasLidas,
         StatusLivro status,
+        BigDecimal nota,
         String autorNome,
         String autorId,
         String urlCapa

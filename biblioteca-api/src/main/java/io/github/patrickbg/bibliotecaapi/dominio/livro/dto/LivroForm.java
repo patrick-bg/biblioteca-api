@@ -7,6 +7,7 @@ import io.github.patrickbg.bibliotecaapi.dominio.livro.model.IdiomaLivro;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.StatusLivro;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.ISBN;
 
 import java.math.BigDecimal;
@@ -38,6 +39,11 @@ public record LivroForm (
         @NotNull(message = "Campo obrigatório.")
         StatusLivro status,
         Integer paginasLidas,
+        BigDecimal nota,
+        @Pattern(
+                regexp = "^https?://[^\s/$.?#].[^\s]*$",
+                message = "Informe uma URL HTTP ou HTTPS válida"
+        )
         String urlCapa
 ) {
 }

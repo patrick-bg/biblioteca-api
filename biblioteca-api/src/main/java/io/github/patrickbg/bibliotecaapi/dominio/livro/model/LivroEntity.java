@@ -67,10 +67,13 @@ public class LivroEntity {
     @Column(name = "data_atualizacao")
     private LocalDate dataAtualizacao;
 
-    @Column(name = "tipoCapa")
-    private String tipoCapa;
+    @Column(name = "url_capa")
+    private String urlCapa;
 
-    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "nota", precision = 2, scale = 1)
+    private BigDecimal nota;
+
+    //@Basic(fetch = FetchType.LAZY)
     @JdbcTypeCode(SqlTypes.VARBINARY)
     @Column(name = "capa")
     private byte[] capa;

@@ -32,13 +32,12 @@ public class LivroService {
     private LivroValidator livroValidator;
 
     public LivroDetalhes criar (LivroForm livroForm){
-
         AutorEntity autor = null;
         if(livroForm.autorId() != null){
             autor = autorRepository.findById(livroForm.autorId()).orElseThrow(RegistroNaoEncontradoException::new);
         }
 
-        var result = livroValidator.validar(livroForm, autor);
+        var result = livroValidator.validar(livroForm, null);
 
         if(result.isInvalido()){
             throw new ValidationException(result.getCamposInvalidos());
@@ -59,10 +58,11 @@ public class LivroService {
     public void atualizar(UUID id, @Valid LivroForm livroAtualizado){
         AutorEntity autor = null;
         if(livroAtualizado.autorId() != null){
-            autor = autorRepository.findById(livroAtualizado.autorId()).orElse(null);
+            autor = autorRepository.findById(livroAtualizado.autorId()).orElseThrow(RegistroNaoEncontradoException::new);
         }
+
         var entity = livroRepository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
-        var result = livroValidator.validar(livroAtualizado, autor);
+        var result = livroValidator.validar(livroAtualizado, id);
 
         if(result.isInvalido()){
             throw new ValidationException(result.getCamposInvalidos());
@@ -74,6 +74,11 @@ public class LivroService {
 
     public Page<LivroDetalhes> listar (PageRequest pageRequest){
         return livroRepository.findAll(pageRequest).map(livroMapper::toDetalhes);
+    }
+
+    public void deletar(UUID id){
+        var livro =  livroRepository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        livroRepository.delete(livro);
     }
 
 }

@@ -15,15 +15,10 @@ public class LivroValidator {
     @Autowired
     private LivroRepository livroRepository;
 
-    public ValidationResult validar (LivroForm form, AutorEntity autor){
+    public ValidationResult validar (LivroForm form, UUID uuid){
         var result = ValidationResult.novo();
 
-        if(autor == null){
-            result.add(new CampoInvalido("autorId", "Autor não encontrado."));
-        }
-
-        assert autor != null;
-        var isListaNaoVazia = !livroRepository.findByTituloAndNotId(form.titulo(), autor.getId()).isEmpty();
+        var isListaNaoVazia = !livroRepository.findByTituloAndNotId(form.titulo(), uuid).isEmpty();
 
         if(isListaNaoVazia){
             result.add(new CampoInvalido("titulo", "Já cadastrado"));
@@ -31,4 +26,5 @@ public class LivroValidator {
 
         return result;
     }
+
 }

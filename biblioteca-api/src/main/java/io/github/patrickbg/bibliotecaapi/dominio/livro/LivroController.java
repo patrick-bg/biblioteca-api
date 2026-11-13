@@ -46,4 +46,10 @@ public class LivroController {
         var pageRequest = PageRequest.of(page, size);
         return livroService.listar(pageRequest);
     }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar (@PathVariable UUID id){
+        livroService.deletar(id);
+    }
 }
