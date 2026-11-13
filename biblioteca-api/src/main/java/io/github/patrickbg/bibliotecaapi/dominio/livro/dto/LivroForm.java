@@ -1,13 +1,10 @@
 package io.github.patrickbg.bibliotecaapi.dominio.livro.dto;
 
-import io.github.patrickbg.bibliotecaapi.dominio.autor.model.AutorEntity;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.FormatoLivro;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.GeneroLivro;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.IdiomaLivro;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.StatusLivro;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.ISBN;
 
 import java.math.BigDecimal;
@@ -39,6 +36,8 @@ public record LivroForm (
         @NotNull(message = "Campo obrigatório.")
         StatusLivro status,
         Integer paginasLidas,
+        @DecimalMin(value = "0.1", message = "Nota deve ser maior que zero.")
+        @DecimalMax(value = "5.0", message = "Nota máxima de 5.0.")
         BigDecimal nota,
         @Pattern(
                 regexp = "^https?://[^\s/$.?#].[^\s]*$",

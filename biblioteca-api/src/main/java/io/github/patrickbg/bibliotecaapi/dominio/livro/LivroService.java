@@ -8,6 +8,7 @@ import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroForm;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.mapper.LivroMapper;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.LivroEntity;
+import io.github.patrickbg.bibliotecaapi.dominio.livro.model.StatusLivro;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,7 @@ public class LivroService {
         }
 
         LivroEntity entity = livroMapper.toEntity(livroForm,autor);
+        livroMapper.ajustarPaginasLidas(entity);
         livroRepository.save(entity);
 
         return livroMapper.toDetalhes(entity);
@@ -69,6 +71,7 @@ public class LivroService {
         }
 
         livroMapper.update(entity, livroAtualizado);
+        livroMapper.ajustarPaginasLidas(entity);
         livroRepository.save(entity);
     }
 

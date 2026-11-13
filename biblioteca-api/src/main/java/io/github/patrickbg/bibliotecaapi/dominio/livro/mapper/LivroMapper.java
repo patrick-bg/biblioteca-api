@@ -4,6 +4,8 @@ import io.github.patrickbg.bibliotecaapi.dominio.autor.model.AutorEntity;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroForm;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.LivroEntity;
+import io.github.patrickbg.bibliotecaapi.dominio.livro.model.StatusLivro;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -20,4 +22,14 @@ public interface LivroMapper {
 
     @Mapping(target = "autor", ignore = true)
     void update(@MappingTarget LivroEntity entity, LivroForm dadosAtualizados);
+
+    @AfterMapping
+    default void ajustarPaginasLidas(@MappingTarget LivroEntity entity){
+        if(entity.getStatus() == StatusLivro.LIDO){
+            entity.setPaginasLidas(entity.getPaginasTotais());
+        }
+        if (entity.getStatus() == StatusLivro.BACKLOG){
+            entity.setPaginasLidas(0);
+        }
+    }
 }
