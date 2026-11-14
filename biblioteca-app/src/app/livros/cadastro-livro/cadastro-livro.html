@@ -211,7 +211,7 @@
 
             <div class="form-group">
                 <label for="status">Status da leitura: *</label>
-                <select formControlName="status">
+                <select formControlName="status" (change)="handleStatusChange()">
                     <option value="">Selecione...</option>
                     <option value="LIDO">Finalizada</option>
                     <option value="LENDO">Em andamento</option>
@@ -236,7 +236,7 @@
             @if (isLeituraIniciada()) {
                 <div class="form-group">
                     <label for="paginasLidas">Paginas lidas até o momento: *</label>
-                    <input formControlName="paginasLidas" type="number" id="paginasLidas" name="paginasLidas" placeholder="Ex: Don Casmurro">
+                    <input formControlName="paginasLidas" min="0" type="number" id="paginasLidas" name="paginasLidas" placeholder="Ex: Don Casmurro">
 
                     @if (form.controls.paginasLidas.hasError('required') && form.controls.paginasLidas.touched) {
                         <span class="form-hint form-hint-error">
@@ -244,9 +244,21 @@
                         </span>
                     }
 
+                    @if (form.controls.paginasLidas.hasError('min') && form.controls.paginasLidas.touched) {
+                        <span class="form-hint form-hint-error">
+                            Um livro iniciado deve ter pelo menos uma página lida.
+                        </span>
+                    }
+
                     @if (form.controls.paginasLidas.hasError('apiError') && form.controls.paginasLidas.touched) {
                         <span class="form-hint form-hint-error">
                             {{ form.get('paginasLidas')?.errors?.['apiError']}}
+                        </span>
+                    }
+
+                    @if (form.hasError('paginasExcedidas') && form.controls.paginasLidas.touched) {
+                        <span class="form-hint form-hint-error">
+                            As páginas lidas não podem ser iguais ou maiores que o total de páginas.
                         </span>
                     }
                 </div>
@@ -259,15 +271,25 @@
                         id="nota" 
                         name="nota" 
                         formControlName="nota" 
-                        type="text"
-                        mask="separator.1"
-                        decimalMarker=",">
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="5"
+                    >
                     @if(form.controls.nota.hasError('required') && form.controls.nota.touched){
                         <span class="form-hint form-hint-error">A nota é obrigatória.</span>
                     }
 
                     @if(form.controls.nota.hasError('min') && form.controls.nota.touched){
                         <span class="form-hint form-hint-error">A nota deve ser maior que zero.</span>
+                    }
+
+                    @if(form.controls.nota.hasError('max') && form.controls.nota.touched){
+                        <span class="form-hint form-hint-error">A nota máxima é 5.0.</span>
+                    }
+
+                    @if(form.controls.nota.hasError('pattern') && form.controls.nota.touched){
+                        <span class="form-hint form-hint-error">Nota somente até uma casa decimal (Ex: 4,5).</span>
                     }
 
                     @if(form.controls.nota.hasError('apiError') && form.controls.nota.touched){
