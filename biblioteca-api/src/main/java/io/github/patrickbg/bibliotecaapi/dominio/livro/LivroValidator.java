@@ -49,6 +49,10 @@ public class LivroValidator {
             }
         }
 
+        if (form.status() == StatusLivro.LIDO && form.nota() == null){
+            result.add(new CampoInvalido("nota","Um livro lido deve possuir uma nota."));
+        }
+
         return result;
     }
 

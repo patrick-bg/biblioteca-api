@@ -1,0 +1,301 @@
+<app-header titulo="Cadastro de Livros"></app-header>
+
+<main class="content">
+    <div class="card">
+        <h2>Novo Livro</h2>
+
+        <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="form">
+
+            <div class="form-group">
+                <label for="titulo">Título do Livro: *</label>
+                <input formControlName="titulo" type="text" id="titulo" name="titulo" placeholder="Ex: Don Casmurro">
+
+                @if (form.controls.titulo.hasError('required') && form.controls.titulo.touched) {
+                    <span class="form-hint form-hint-error">
+                        O título do livro é obrigatório.
+                    </span>
+                }
+
+                @if (form.controls.titulo.hasError('apiError') && form.controls.titulo.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{ form.get('titulo')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="isbn">ISBN do Livro: *</label>
+                <input formControlName="isbn" type="text" id="isbn" name="isbn" placeholder="Ex: 978-8576573135">
+
+                @if (form.controls.isbn.hasError('required') && form.controls.isbn.touched) {
+                    <span class="form-hint form-hint-error">
+                        O título do livro é obrigatório.
+                    </span>
+                }
+
+                @if (form.controls.isbn.hasError('apiError') && form.controls.isbn.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{ form.get('isbn')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="genero">Genero do Livro: *</label>
+                <select formControlName="genero">
+                    <option value="">Selecione...</option>
+                    <option value="FICCAO_CIENTIFICA">Ficção Científica</option>
+                    <option value="FANTASIA">Fantasia</option>
+                    <option value="SUSPENSE">Suspense</option>
+                    <option value="TERROR">Terror</option>
+                    <option value="ROMANCE_HISTORICO">Romance Histórico</option>
+                    <option value="PSICOLOGIA">Psicologia</option>
+                    <option value="CIENCIAS_POLITICAS">Ciencias Políticas</option>
+                    <option value="CIENCIAS_BIOLOGICAS">Ciencias Biológicas</option>
+                    <option value="MANGA">Manga</option>
+                    <option value="DRAMA">Drama</option>
+                    <option value="Biografia">Biografia</option>
+
+                </select>
+
+                @if (form.controls.genero.hasError('required') && form.controls.genero.touched) {
+                    <span class="form-hint form-hint-error">
+                        O genero do livro é obrigatório.
+                    </span>
+                }
+
+                @if (form.controls.genero.hasError('apiError') && form.controls.genero.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{ form.get('genero')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="preco">Preço do livro: *</label>
+                <input id="preco" 
+                        nome="preco" 
+                        formControlName="preco" 
+                        type="text"
+                        mask="separator.2"
+                        thousandSeparator="."
+                        decimalMarker=",">
+                @if(form.controls.preco.hasError('required') && form.controls.preco.touched){
+                    <span class="form-hint form-hint-error">O preço do livro é obrigatório.</span>
+                }
+
+                @if(form.controls.preco.hasError('min') && form.controls.preco.touched){
+                    <span class="form-hint form-hint-error">O preço deve ser maior que zero.</span>
+                }
+
+                @if(form.controls.preco.hasError('apiError') && form.controls.preco.touched){
+                    <span class="form-hint form-hint-error">
+                        {{form.get('preco')?.errors?.['apiError'] }}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="autorId">Autor(a): *</label>
+                <select id="autorId" formControlName="autorId">
+                    <option value="">Selecione...</option>
+                    @for (autor of autoresDisponiveis; track autor.id) {
+                        <option [value]="autor.id">{{ autor.nome}}</option>
+                    }
+                </select>
+
+                @if(form.controls.autorId.hasError('required') && form.controls.autorId.touched){
+                    <span class="form-hint form-hint-error">A categoria é obrigatória.</span>
+                }
+
+                @if(form.controls.autorId.hasError('apiError') && form.controls.autorId.touched){
+                    <span class="form-hint form-hint-error">
+                        {{form.get('autorId')?.errors?.['apiError'] }}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="idioma">Idioma do Livro: *</label>
+                <select formControlName="idioma">
+                    <option value="">Selecione...</option>
+                    <option value="PORTUGUES">Português</option>
+                    <option value="INGLES">Inglês</option>
+                    
+
+                </select>
+
+                @if (form.controls.idioma.hasError('required') && form.controls.idioma.touched) {
+                    <span class="form-hint form-hint-error">
+                        O idioma do livro é obrigatório.
+                    </span>
+                }
+
+                @if (form.controls.idioma.hasError('apiError') && form.controls.idioma.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{ form.get('idioma')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="formato">Formato do Livro: *</label>
+                <select formControlName="formato">
+                    <option value="">Selecione...</option>
+                    <option value="FISICO">Fisico</option>
+                    <option value="EBOOK">Ebook</option>
+                    
+
+                </select>
+
+                @if (form.controls.formato.hasError('required') && form.controls.formato.touched) {
+                    <span class="form-hint form-hint-error">
+                        O formato do livro é obrigatório.
+                    </span>
+                }
+
+                @if (form.controls.formato.hasError('apiError') && form.controls.formato.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{ form.get('formato')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="editora">Editora do Livro: *</label>
+                <input formControlName="editora" type="text" id="editora" name="editora" placeholder="Ex: Suma">
+
+                @if (form.controls.editora.hasError('required') && form.controls.editora.touched) {
+                    <span class="form-hint form-hint-error">
+                        A editora do livro é obrigatória.
+                    </span>
+                }
+
+                @if (form.controls.editora.hasError('apiError') && form.controls.editora.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{ form.get('editora')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="dataPublicacao">Data de publicação do livro: *</label>
+                <input id="dataPublicacao" nome="dataPublicacao" formControlName="dataPublicacao" type="date">
+                @if(form.controls.dataPublicacao.hasError('required') && form.controls.dataPublicacao.touched){
+                    <span class="form-hint form-hint-error">A data é obrigatória.</span>
+                }
+
+                @if(form.controls.dataPublicacao.hasError('apiError') && form.controls.dataPublicacao.touched){
+                    <span class="form-hint form-hint-error">
+                        {{form.get('dataPublicacao')?.errors?.['apiError'] }}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="paginasTotais">Total de páginas do livro: *</label>
+                <input formControlName="paginasTotais" type="number" id="paginasTotais" name="paginasTotais">
+
+                @if (form.controls.paginasTotais.hasError('required') && form.controls.paginasTotais.touched) {
+                    <span class="form-hint form-hint-error">
+                        Informe o total de páginas do livro.
+                    </span>
+                }
+
+                @if (form.controls.paginasTotais.hasError('apiError') && form.controls.paginasTotais.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{ form.get('paginasTotais')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status da leitura: *</label>
+                <select formControlName="status">
+                    <option value="">Selecione...</option>
+                    <option value="LIDO">Finalizada</option>
+                    <option value="LENDO">Em andamento</option>
+                    <option value="BACKLOG">Livro no Backlog</option>
+                    <option value="RELEITURA">Em releitura</option>
+                    <option value="ABANDONADO">Leitura abandonada</option>
+                </select>
+
+                @if (form.controls.status.hasError('required') && form.controls.status.touched) {
+                    <span class="form-hint form-hint-error">
+                        O status do livro é obrigatório.
+                    </span>
+                }
+
+                @if (form.controls.status.hasError('apiError') && form.controls.status.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{ form.get('status')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            @if (isLeituraIniciada()) {
+                <div class="form-group">
+                    <label for="paginasLidas">Paginas lidas até o momento: *</label>
+                    <input formControlName="paginasLidas" type="number" id="paginasLidas" name="paginasLidas" placeholder="Ex: Don Casmurro">
+
+                    @if (form.controls.paginasLidas.hasError('required') && form.controls.paginasLidas.touched) {
+                        <span class="form-hint form-hint-error">
+                            Informe a quantidade de páginas lidas até o momento.
+                        </span>
+                    }
+
+                    @if (form.controls.paginasLidas.hasError('apiError') && form.controls.paginasLidas.touched) {
+                        <span class="form-hint form-hint-error">
+                            {{ form.get('paginasLidas')?.errors?.['apiError']}}
+                        </span>
+                    }
+                </div>
+            }
+
+            @if (isLeituraFinalizada()) {
+                <div class="form-group">
+                    <label for="nota">Nota da leitura: *</label>
+                    <input 
+                        id="nota" 
+                        name="nota" 
+                        formControlName="nota" 
+                        type="text"
+                        mask="separator.1"
+                        decimalMarker=",">
+                    @if(form.controls.nota.hasError('required') && form.controls.nota.touched){
+                        <span class="form-hint form-hint-error">A nota é obrigatória.</span>
+                    }
+
+                    @if(form.controls.nota.hasError('min') && form.controls.nota.touched){
+                        <span class="form-hint form-hint-error">A nota deve ser maior que zero.</span>
+                    }
+
+                    @if(form.controls.nota.hasError('apiError') && form.controls.nota.touched){
+                        <span class="form-hint form-hint-error">
+                            {{form.get('nota')?.errors?.['apiError'] }}
+                        </span>
+                    }
+                </div>
+            }
+
+            <div class="form-group">
+                <label for="urlCapa">URL da capa do livro: </label>
+                <input formControlName="urlCapa" type="text" id="urlCapa" name="urlCapa" placeholder="https://capalivro.jpg">
+
+        
+                @if (form.controls.urlCapa.hasError('apiError') && form.controls.urlCapa.touched) {
+                    <span class="form-hint form-hint-error">
+                        {{ form.get('urlCapa')?.errors?.['apiError']}}
+                    </span>
+                }
+            </div>
+
+            <div class="form-action">
+                <button type="submit" class="btn-primary">Salvar</button>
+                <button type="button" class="btn-secondary">Cancelar</button>
+            </div>
+
+        </form>
+    </div>
+
+</main>

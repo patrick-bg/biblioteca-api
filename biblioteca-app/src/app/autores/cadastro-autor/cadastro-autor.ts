@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Header } from '../../common/components/header/header';
 
 interface CadastroAutorForm{
   nome: FormControl<string>;
@@ -19,7 +20,7 @@ interface CadastroAutorForm{
 
 @Component({
   selector: 'app-cadastro-autor',
-  imports: [ ReactiveFormsModule, CommonModule, RouterModule ],
+  imports: [ Header, ReactiveFormsModule, CommonModule, RouterModule ],
   templateUrl: './cadastro-autor.html',
   styleUrl: './cadastro-autor.scss',
 })

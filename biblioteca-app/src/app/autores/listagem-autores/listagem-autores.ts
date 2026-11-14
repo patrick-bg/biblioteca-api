@@ -6,10 +6,11 @@ import { DetalhesAutor } from '../dados-autor';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Header } from '../../common/components/header/header';
 
 @Component({
   selector: 'app-listagem-autores',
-  imports: [CommonModule, RouterLink, RouterModule],
+  imports: [ Header, CommonModule, RouterLink, RouterModule],
   templateUrl: './listagem-autores.html',
   styleUrl: './listagem-autores.scss',
 })
