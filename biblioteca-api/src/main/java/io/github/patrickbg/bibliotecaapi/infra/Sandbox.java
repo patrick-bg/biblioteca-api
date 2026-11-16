@@ -3,6 +3,7 @@ package io.github.patrickbg.bibliotecaapi.infra;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.AutorRepository;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.model.AutorEntity;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.model.GeneroAutor;
+import io.github.patrickbg.bibliotecaapi.dominio.autor.model.PaisOrigemAutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class Sandbox implements CommandLineRunner {
         autor.setNome("Patrick Brian");
         autor.setGeneroAutor(GeneroAutor.MASCULINO);
         autor.setDataNascimento(LocalDate.of(1989, 10, 10));
-        autor.setPaisOrigem("Brasil");
+        autor.setPaisOrigem(PaisOrigemAutor.BRASIL);
         autorRepository.save(autor);
     }
 

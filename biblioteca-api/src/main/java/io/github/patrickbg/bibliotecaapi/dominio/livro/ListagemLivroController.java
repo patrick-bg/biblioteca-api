@@ -1,5 +1,7 @@
 package io.github.patrickbg.bibliotecaapi.dominio.livro;
 
+import io.github.patrickbg.bibliotecaapi.dominio.autor.model.GeneroAutor;
+import io.github.patrickbg.bibliotecaapi.dominio.autor.model.PaisOrigemAutor;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.GeneroLivro;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.IdiomaLivro;
@@ -34,15 +36,21 @@ public class ListagemLivroController {
             @RequestParam(value = "autor-id", required = false) UUID autorId,
             @RequestParam(value = "genero", required = false) String genero,
             @RequestParam(value = "idioma", required = false) String idioma,
-            @RequestParam(value = "titulo", required = false) String titulo
+            @RequestParam(value = "titulo", required = false) String titulo,
+            @RequestParam(value = "autor-genero", required = false) String generoAutor,
+            @RequestParam(value = "pais-origem", required = false) String paisOrigem,
+            @RequestParam(value = "editora", required = false) String editora
     ) {
         var pageRequest = PageRequest.of(page, size);
         var anoConvertido = parseAno(ano);
         var statusLivro = parseStatus(status);
         var generoConvertido = parseGenero(genero);
         var idiomaConvertido = parseIdioma(idioma);
+        var generoAutorConvertido = parseGeneroAutor(generoAutor);
+        var paisOrigemConvertido = parsePaisOrigemAutor(paisOrigem);
 
-        return livroService.listar(pageRequest,anoConvertido, statusLivro, autorId, generoConvertido, idiomaConvertido, titulo);
+
+        return livroService.listar(pageRequest,anoConvertido, statusLivro, autorId, generoConvertido, idiomaConvertido, titulo, generoAutorConvertido, paisOrigemConvertido, editora);
     }
 
     private Year parseAno(String ano) {
@@ -92,6 +100,31 @@ public class ListagemLivroController {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Parâmetro 'idioma' inválido.");
         }
     }
+
+    private GeneroAutor parseGeneroAutor(String generoAutor){
+        if (generoAutor == null || generoAutor.isBlank()) {
+            return null;
+        }
+
+        try {
+            return GeneroAutor.valueOf(generoAutor);
+        }catch (IllegalArgumentException e){
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Parâmetro 'generoAutor' inválido.");
+        }
+    }
+
+    private PaisOrigemAutor parsePaisOrigemAutor(String paisOrigem){
+        if (paisOrigem == null || paisOrigem.isBlank()) {
+            return null;
+        }
+
+        try {
+            return PaisOrigemAutor.valueOf(paisOrigem);
+        }catch (IllegalArgumentException e){
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Parâmetro 'paisOrigem' inválido.");
+        }
+    }
+
 
 
 }

@@ -39,8 +39,9 @@ public class AutorEntity {
     @Column(name = "genero_autor", nullable = false)
     private GeneroAutor generoAutor;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "pais", nullable = false)
-    private String paisOrigem;
+    private PaisOrigemAutor paisOrigem;
 
     @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY)
     private List<LivroEntity> livros;

@@ -4,6 +4,8 @@ import io.github.patrickbg.bibliotecaapi.common.exceptions.RegistroNaoEncontrado
 import io.github.patrickbg.bibliotecaapi.common.exceptions.ValidationException;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.AutorRepository;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.model.AutorEntity;
+import io.github.patrickbg.bibliotecaapi.dominio.autor.model.GeneroAutor;
+import io.github.patrickbg.bibliotecaapi.dominio.autor.model.PaisOrigemAutor;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroForm;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.mapper.LivroMapper;
@@ -98,7 +100,10 @@ public class LivroService {
             UUID autorId,
             GeneroLivro genero,
             IdiomaLivro idioma,
-            String titulo){
+            String titulo,
+            GeneroAutor generoAutor,
+            PaisOrigemAutor paisOrigem,
+            String editora){
         Specification<LivroEntity> spec = Specification.unrestricted();
 
         if(status != null){
@@ -123,6 +128,18 @@ public class LivroService {
 
         if(titulo != null){
             spec = spec.and(tituloLike(titulo));
+        }
+
+        if(generoAutor != null){
+            spec = spec.and(generoAutorEqual(generoAutor));
+        }
+
+        if(paisOrigem != null){
+            spec = spec.and(paisOrigemEqual(paisOrigem));
+        }
+
+        if(editora != null){
+            spec = spec.and(editoraLike(editora));
         }
 
         var result = livroRepository.findAll(spec,pageRequest);

@@ -1,5 +1,7 @@
 package io.github.patrickbg.bibliotecaapi.dominio.livro;
 
+import io.github.patrickbg.bibliotecaapi.dominio.autor.model.GeneroAutor;
+import io.github.patrickbg.bibliotecaapi.dominio.autor.model.PaisOrigemAutor;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.*;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -28,6 +30,15 @@ public class LivroSpecs {
         };
     }
 
+    public static Specification<LivroEntity> paisEqual(String paisOrigem) {
+        return (root, query, criteriaBuilder) -> {
+            if (paisOrigem == null) {
+                return null;
+            }
+            return criteriaBuilder.equal(root.get("autor").get("paisOrigem"), paisOrigem);
+        };
+    }
+
     public static Specification<LivroEntity> anoEqual(Year ano) {
         return (root, query, criteriaBuilder) -> {
             if (ano == null) {
@@ -46,6 +57,24 @@ public class LivroSpecs {
                 return null;
             }
             return criteriaBuilder.equal(root.get("genero"), genero);
+        };
+    }
+
+    public static Specification<LivroEntity> generoAutorEqual(GeneroAutor generoAutor) {
+        return (root, query, criteriaBuilder) -> {
+            if (generoAutor == null) {
+                return null;
+            }
+            return criteriaBuilder.equal(root.get("autor").get("generoAutor"), generoAutor);
+        };
+    }
+
+    public static Specification<LivroEntity> paisOrigemEqual (PaisOrigemAutor paisOrigem) {
+        return (root, query, criteriaBuilder) -> {
+            if (paisOrigem == null) {
+                return null;
+            }
+            return criteriaBuilder.equal(root.get("autor").get("paisOrigem"), paisOrigem);
         };
     }
 
@@ -76,6 +105,19 @@ public class LivroSpecs {
             String padraoBusca = "%" + titulo.trim().toLowerCase() + "%";
             return criteriaBuilder.like(
                     criteriaBuilder.lower(root.get("titulo")), padraoBusca
+            );
+        };
+    }
+
+    public static Specification<LivroEntity> editoraLike(String editora) {
+        return (root, query, criteriaBuilder) -> {
+            if (editora == null || editora.isBlank()) {
+                return null;
+            }
+
+            String padraoBusca = "%" + editora.trim().toLowerCase() + "%";
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("editora")), padraoBusca
             );
         };
     }

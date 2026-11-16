@@ -37,6 +37,7 @@ export class DetalhesLivros{
 
 export class FiltroLivro{
     genero?: string;
+    titulo?: string;
     autorId?: string;
     idioma?: string;
     formato?: string;
@@ -48,4 +49,6 @@ export class FiltroLivro{
     autorNome?: string;
     autorGenero?: string;
     paisOrigemAutor?: string;
+    page?: number;
+    size?: number;
 }

@@ -3,6 +3,7 @@ import { Template } from './template/template';
 import { CadastroAutor } from './autores/cadastro-autor/cadastro-autor';
 import { ListagemAutores } from './autores/listagem-autores/listagem-autores';
 import { CadastroLivro } from './livros/cadastro-livro/cadastro-livro';
+import { ListagemLivros } from './livros/listagem-livros/listagem-livros';
 
 export const routes: Routes = [
     {
@@ -20,6 +21,10 @@ export const routes: Routes = [
             {
                 path: 'cadastro-livros',
                 component: CadastroLivro
+            },
+            {
+                path: 'listagem-livros',
+                component: ListagemLivros
             }
         ]
     }
