@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("livros")
-@CrossOrigin("*")
 public class CadastroLivroController {
 
     @Autowired

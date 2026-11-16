@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("livros")
-@CrossOrigin("*")
 public class ListagemLivroController {
 
     @Autowired
