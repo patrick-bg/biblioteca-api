@@ -9,7 +9,7 @@ export class DadosLivroForm {
     idioma!: string;
     formato!: string;
     editora!: string;
-    dataPublicacao!: Date;
+    dataPublicacao!: string;
     paginasTotais!: number;
     status!: StatusLivro;
     paginasLidas?: number | null;

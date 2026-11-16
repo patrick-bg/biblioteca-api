@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
-import { StatusLivro } from '../dados-livros';
+import { DadosLivroForm, StatusLivro } from '../dados-livros';
 import { ToastrService } from 'ngx-toastr';
 import { LivroService } from '../livro-service';
 import { DetalhesAutor } from '../../autores/dados-autor';
@@ -9,6 +9,7 @@ import { Header } from '../../common/components/header/header';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgxMaskDirective } from 'ngx-mask';
+import { ValidationErrorResponse } from '../../common/validation/validation-error-model';
 
 interface CadastroLivroForm{
   titulo: FormControl<string>;
@@ -123,7 +124,45 @@ export class CadastroLivro implements OnInit {
     if(this.isFormInvalid()){
       return;
     }
-    console.log(this.form.value);
+
+    const dados = this.form.value as DadosLivroForm;
+    dados.preco = this.parsePreco(dados.preco);
+
+    this.service.criar(dados).subscribe({
+      next: () => {
+        this.toast.success('Livro cadastrado com sucesso!');
+        this.form.reset();
+      },
+      error: (error) => this.onApiError(error)
+    });
+  }
+
+  private aplicarErrosValidacao(error: ValidationErrorResponse){
+      error.camposInvalidos.forEach( ci => {
+        const control = this.form.get(ci.campo);
+        if(control){
+          control.setErrors({apiError: ci.erro});
+          control.markAsTouched();
+        }
+      });
+    }
+  
+  private onApiError(response: any) : void{
+    if(response.status === 422){
+      this.aplicarErrosValidacao(response.error);
+      this.toast.error('Erro de validação. Verifique os valores informados.');
+      return;
+    }
+    this.toast.error('Ocorreu um erro ao processar a requisição.');
+    console.error(response.error);
+  }
+
+  private parsePreco(precoMascarado: string) : string {
+    if(!precoMascarado){
+      return '';
+    }
+
+    return precoMascarado.replace(/\./g, '').replace(',','.');
   }
 
 }
