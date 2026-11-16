@@ -7,15 +7,22 @@ import io.github.patrickbg.bibliotecaapi.dominio.autor.model.AutorEntity;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroForm;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.mapper.LivroMapper;
+import io.github.patrickbg.bibliotecaapi.dominio.livro.model.GeneroLivro;
+import io.github.patrickbg.bibliotecaapi.dominio.livro.model.IdiomaLivro;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.LivroEntity;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.StatusLivro;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.UUID;
+
+import static io.github.patrickbg.bibliotecaapi.dominio.livro.LivroSpecs.*;
 
 @Service
 public class LivroService {
@@ -82,6 +89,45 @@ public class LivroService {
     public void deletar(UUID id){
         var livro =  livroRepository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
         livroRepository.delete(livro);
+    }
+
+    public Page<LivroDetalhes> listar(
+            PageRequest pageRequest,
+            Year ano,
+            StatusLivro status,
+            UUID autorId,
+            GeneroLivro genero,
+            IdiomaLivro idioma,
+            String titulo){
+        Specification<LivroEntity> spec = Specification.unrestricted();
+
+        if(status != null){
+            spec = spec.and(statusEqual(status));
+        }
+
+        if(autorId != null){
+            spec = spec.and(autorEqual(autorId));
+        }
+
+        if(ano != null){
+            spec = spec.and(anoEqual(ano));
+        }
+
+        if(genero != null){
+            spec = spec.and(generoEqual(genero));
+        }
+
+        if(idioma != null){
+            spec = spec.and(idiomaEqual(idioma));
+        }
+
+        if(titulo != null){
+            spec = spec.and(tituloLike(titulo));
+        }
+
+        var result = livroRepository.findAll(spec,pageRequest);
+
+        return result.map(livroMapper::toDetalhes);
     }
 
 }

@@ -2,6 +2,7 @@ package io.github.patrickbg.bibliotecaapi.dominio.livro;
 
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.LivroEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -9,7 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface LivroRepository extends JpaRepository<LivroEntity, UUID> {
+public interface LivroRepository
+        extends JpaRepository<LivroEntity, UUID>, JpaSpecificationExecutor<LivroEntity> {
 
     Optional<LivroEntity> findByTitulo(String titulo);
 

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -69,6 +70,17 @@ public class GlobalExceptionHandler {
                 "message", e.getMessage());
 
         return ResponseEntity.status(status).body(body);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> handleResponseStatusException(ResponseStatusException e){
+
+        return ResponseEntity.status(e.getStatusCode()).body(Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", e.getStatusCode(),
+                "error", e.getMessage(),
+                "message", e.getMessage())
+        );
     }
 
 }
