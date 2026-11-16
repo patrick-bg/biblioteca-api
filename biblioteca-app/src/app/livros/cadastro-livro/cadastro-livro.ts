@@ -51,11 +51,11 @@ export class CadastroLivro implements OnInit {
       idioma: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
       formato: new FormControl(<string>'', {nonNullable: true, validators: Validators.required}),
       editora: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
-      dataPublicacao: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
-      paginasTotais: new FormControl<number>(0, {nonNullable: true, validators: Validators.required}),
+      dataPublicacao: new FormControl<string>('', {nonNullable: true, validators: [Validators.required, dataPublicacaoValidator({permitirFutura:false, anoMinimo: 0o1})]}),
+      paginasTotais: new FormControl<number>(0, {nonNullable: true, validators: [Validators.required, Validators.min(1)]}),
       status: new FormControl<StatusLivro | ''>('', {nonNullable: true, validators: Validators.required}),
       paginasLidas: new FormControl<number>(0, {nonNullable: true, validators: Validators.min(1)} ),
-      nota: new FormControl<number | null>(null, {nonNullable: true, validators: [Validators.min(0), Validators.max(5), Validators.pattern(/^\d+(\.\d{1})?$/) ]}),
+      nota: new FormControl<number | null>(null, {nonNullable: true, validators: [Validators.min(0), Validators.max(5), Validators.pattern(/^\d+(\.\d{1})?$/), Validators.required ]}),
       urlCapa: new FormControl<string>('', {nonNullable: true}),
     },
     {validators: paginasValidator });
@@ -92,12 +92,14 @@ export class CadastroLivro implements OnInit {
 
   handleStatusChange(): void{
     if(!this.isLeituraFinalizada()){
+      this.form.controls.paginasLidas.setValue(this.form.controls.paginasTotais.value);
       this.form.controls.nota.setValue(null);
       this.form.controls.nota.setErrors(null);
     }
 
     if(this.isLeituraFinalizada()){
       this.form.controls.paginasLidas.setValue(this.form.controls.paginasTotais.value);
+      this.form.controls.paginasLidas.setErrors(null);
       this.form.controls.nota.setErrors(null);
     }
 
@@ -130,8 +132,56 @@ export const paginasValidator: ValidatorFn = (group: AbstractControl): Validatio
   const totais = group.get('paginasTotais')?.value;
   const lidas = group.get('paginasLidas')?.value;
 
-  if (totais !== null && lidas !== null && lidas >= totais) {
+  if (totais !== null && lidas !== null && lidas > totais) {
     return { paginasExcedidas: true };
   }
   return null;
 };
+
+export function dataPublicacaoValidator(opcoes?: { 
+  permitirFutura?: boolean; 
+  anoMinimo?: number; 
+}): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const valor = control.value;
+
+    if (!valor) {
+      return null;
+    }
+
+    const regexFormato = /^\d{4}-\d{2}-\d{2}$/;
+    if (!regexFormato.test(valor)) {
+      return { formatoInvalido: true };
+    }
+
+    const [anoStr, mesStr, diaStr] = valor.split('-');
+    const ano = Number(anoStr);
+    const mes = Number(mesStr);
+    const dia = Number(diaStr);
+
+    const anoMin = opcoes?.anoMinimo ?? 1900;
+    if (ano < anoMin) {
+      return { anoInvalido: { min: anoMin, atual: ano } };
+    }
+
+    const dataObjeto = new Date(ano, mes - 1, dia);
+    const dataReal =
+      dataObjeto.getFullYear() === ano &&
+      dataObjeto.getMonth() === mes - 1 &&
+      dataObjeto.getDate() === dia;
+
+    if (!dataReal) {
+      return { dataInexistente: true };
+    }
+
+    if (opcoes?.permitirFutura === false) {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas os dias
+
+      if (dataObjeto > hoje) {
+        return { dataFutura: true };
+      }
+    }
+    return null; 
+  };
+}
