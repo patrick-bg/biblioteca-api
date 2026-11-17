@@ -16,6 +16,7 @@ interface FiltrosForm {
   autorId: FormControl<string>;
   idioma: FormControl<string>;
   formato: FormControl<string>;
+  titulo: FormControl<string>;
   editora: FormControl<string>;
   status: FormControl<StatusLivro | ''>;
   nota: FormControl<number | null>;
@@ -37,6 +38,7 @@ export class ListagemLivros implements OnInit {
 
   listagem$!: Observable<PageResult<DetalhesLivros>>;
   autores: DetalhesAutor[] = [];
+  livros: DetalhesLivros [] = [];
   paginaAtual = 0;
   tamanhoPagina = 10;
 
@@ -49,6 +51,7 @@ export class ListagemLivros implements OnInit {
       autorId: new FormControl<string>('', {nonNullable: true}),
       idioma: new FormControl<string>('', {nonNullable: true}),
       formato: new FormControl<string>('', {nonNullable: true}),
+      titulo: new FormControl<string>('', {nonNullable: true}),
       editora: new FormControl<string>('', {nonNullable: true}),
       status: new FormControl<StatusLivro | ''>('', {nonNullable: true}),
       nota: new FormControl<number | null>(null, {nonNullable: true}),
@@ -57,7 +60,17 @@ export class ListagemLivros implements OnInit {
       paisOrigemAutor: new FormControl<string>('', {nonNullable: true})
     }); 
 
+    this.listarAutores();
     this.listarLivros();
+  }
+
+  listarAutores(){
+    this.service.listarAutores().subscribe({
+      next: (resultado: DetalhesAutor[]) => {
+        this.autores = resultado;
+      },
+      error: () => this.toast.error('Erro ao carregar autores para filtro.')
+    });
   }
 
   listarLivros(){
@@ -66,6 +79,7 @@ export class ListagemLivros implements OnInit {
     const autorId = this.form.get('autorId')?.value;
     const idioma = this.form.get('idioma')?.value;
     const formato = this.form.get('formato')?.value;
+    const titulo = this.form.get('titulo')?.value;
     const editora = this.form.get('editora')?.value;
     const status = this.form.get('status')?.value;
     const nota = this.form.get('nota')?.value;
@@ -81,6 +95,7 @@ export class ListagemLivros implements OnInit {
       autorId: autorId || undefined,
       idioma: idioma || undefined,
       formato: formato || undefined,
+      titulo: titulo || undefined,
       editora: editora || undefined,
       status: status || undefined,
       nota: nota || undefined,
@@ -91,8 +106,13 @@ export class ListagemLivros implements OnInit {
   }
 
   aplicarFiltros(){
+    console.log(this.form.value);
     this.paginaAtual = 0;
     this.listarLivros();
+  }
+
+  limparFiltros(){
+    this.form.reset();
   }
 
 }

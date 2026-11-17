@@ -17,7 +17,7 @@ export class LivroService {
   }
 
   listarAutores(): Observable<DetalhesAutor[]>{
-    return this.http.get<DetalhesAutor[]>(`${this.baseUrl}/autores-cadastro-livro`)
+    return this.http.get<DetalhesAutor[]>(`${this.baseUrl}/autores-listagem`)
   }
 
   deletar(id: string) : Observable<void>{

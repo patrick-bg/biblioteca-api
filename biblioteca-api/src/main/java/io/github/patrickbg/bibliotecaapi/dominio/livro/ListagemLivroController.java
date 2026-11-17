@@ -1,5 +1,7 @@
 package io.github.patrickbg.bibliotecaapi.dominio.livro;
 
+import io.github.patrickbg.bibliotecaapi.dominio.autor.AutorService;
+import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorDetalhes;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.model.GeneroAutor;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.model.PaisOrigemAutor;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.dto.LivroDetalhes;
@@ -18,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.DateTimeException;
 import java.time.Year;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,6 +29,9 @@ public class ListagemLivroController {
 
     @Autowired
     private LivroService livroService;
+
+    @Autowired
+    private AutorService autorService;
 
     @GetMapping
     public Page<LivroDetalhes> listar(
@@ -51,6 +57,11 @@ public class ListagemLivroController {
 
 
         return livroService.listar(pageRequest,anoConvertido, statusLivro, autorId, generoConvertido, idiomaConvertido, titulo, generoAutorConvertido, paisOrigemConvertido, editora);
+    }
+
+    @GetMapping("autores-listagem")
+    public List<AutorDetalhes> listarTodosAutores(){
+        return autorService.listaAutores();
     }
 
     private Year parseAno(String ano) {

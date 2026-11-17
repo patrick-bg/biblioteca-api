@@ -1,1 +1,93 @@
-<p>listagem-livros works!</p>
+<app-header titulo="Meus Livros"></app-header>
+    <main class="content">
+        <div class="card-full">
+            <button 
+                class="btn-secondary"
+                type="button"
+                [routerLink]="['/paginas/cadastro-livros']">
+                <i class="fa-solid fa-plus"></i>
+                Cadastrar Novo
+            </button>
+
+            <div class="table-card">
+                <form [formGroup]="form" class="form" (ngSubmit)="aplicarFiltros()">
+                    <div class="filtros-grid">
+                        <div class="form-group filtro-col">
+                            <label for="ano">Ano:</label>
+                            <input type="number" id="ano" name="ano" formControlName="ano">
+                        </div>
+
+                        <div class="form-group filtro-col">
+                            <label for="genero">Genero:</label>
+                            <select name="genero" id="genero" formControlName="genero">
+                                <option value="">Todos</option>
+                                <option value="FICCAO_CIENTIFICA">Ficção Científica</option>
+                                <option value="FANTASIA">Fantasia</option>
+                                <option value="SUSPENSE">Suspense</option>
+                                <option value="TERROR">Terror</option>
+                                <option value="ROMANCE_HISTORICO">Romance Histórico</option>
+                                <option value="CIENCIAS_POLITICAS">Ciências Políticas</option>
+                                <option value="CIENCIAS_BIOLOGICAS">Ciências Biológicas</option>
+                                <option value="Manga">Mangá</option>
+                                <option value="DRAMA">Drama</option>
+                                <option value="BIOGRAFIA">Biografia</option>
+                                <option value="ENSAIO_HISTORICO">Ensaio Histórico</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group filtro-col">
+                            <label for="autorId">Autor(a):</label>
+                            <select name="autorId" id="autorId" formControlName="autorId">
+                                <option value="">Todos</option>
+                                @for (autor of autores; track autor.id) {
+                                    <option [value]="autor.id">{{autor.nome}}</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group filtro-col">
+                            <label for="status">Status do livro:</label>
+                            <select name="status" id="status" formControlName="status">
+                                <option value="">Todos</option>
+                                <option value="BACKLOG">Backlog</option>
+                                <option value="LENDO">Lendo</option>
+                                <option value="LIDO">Lido</option>
+                                <option value="RELEITURA">Releitura</option>
+                                <option value="ABANDONADO">Abandonado</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group filtro-col">
+                            <label for="idioma">Idioma do livro:</label>
+                            <select name="idioma" id="idioma" formControlName="idioma">
+                                <option value="">Todos</option>
+                                <option value="PORTUGUES">Português</option>
+                                <option value="INGLES">Inglês</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group filtro-col">
+                            <label for="titulo">Título do Livro:</label>
+                            <input list="lista-livros" name="titulo" id="titulo" formControlName="titulo">
+                            <datalist id="lista-livros">    
+                                @for (livro of livros; track livro.titulo) {
+                                        <option [value]="livro"></option>
+                                    }
+                            </datalist>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions filtros-actions">
+                        <button type="submit" class="btn-primary">Filtrar</button>
+                        <button type="button" class="btn-secondary" 
+                            (click)="limparFiltros()">
+                                Limpar
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </main>
