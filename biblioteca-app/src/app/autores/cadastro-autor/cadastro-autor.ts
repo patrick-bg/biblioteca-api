@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Header } from '../../common/components/header/header';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 interface CadastroAutorForm{
   nome: FormControl<string>;
@@ -31,19 +32,40 @@ export class CadastroAutor implements OnInit {
   service = inject(AutorService);
   toast = inject(ToastrService);
   idAutorEdicao?: string | null;
+  dataMaxima = new Date().toISOString().split('T')[0];
 
   ngOnInit(): void {
     this.form = new FormGroup<CadastroAutorForm>({
       nome: new FormControl<string>('', {nonNullable: true, validators: Validators.required }),
       statusAutor: new FormControl<StatusAutor | ''>('', {nonNullable: true, validators: Validators.required}),
-      dataNascimento: new FormControl<string>('', {nonNullable: true, validators: Validators.required }),
-      dataFalecimento: new FormControl<string>('', {nonNullable: true}),
+      dataNascimento: new FormControl<string>('', {nonNullable: true, validators: [Validators.required, validarDataFutura] }),
+      dataFalecimento: new FormControl<string>('', {nonNullable: true, validators: validarDataFutura}),
       generoAutor: new FormControl<string> ('', {nonNullable: true, validators: Validators.required}),
       paisOrigem: new FormControl<string>('', {nonNullable: true, validators: Validators.required})
-    });
-
+    },
+    { validators: validarDatasAutor }
+  );
+    this.monitorarStatusAutor();
     this.carregarDadosParaEdicao();
   }
+
+  private monitorarStatusAutor(): void {
+  const statusControl = this.form.controls.statusAutor;
+  const falecimentoControl = this.form.controls.dataFalecimento;
+
+  statusControl.valueChanges.subscribe((status) => {
+    if (status === 'FALECIDO') {
+      falecimentoControl.enable();
+      falecimentoControl.setValidators([Validators.required, validarDataFutura]);
+    } else {
+      falecimentoControl.reset('');
+      falecimentoControl.clearValidators();
+      falecimentoControl.disable();
+    }
+
+    falecimentoControl.updateValueAndValidity();
+  });
+}
 
   carregarDadosParaEdicao(){
     this.idAutorEdicao = this.rotaAtiva.snapshot.queryParamMap.get('id');
@@ -123,3 +145,37 @@ export class CadastroAutor implements OnInit {
   }
   
 }
+
+export const validarDatasAutor: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const nascimento = control.get('dataNascimento')?.value;
+  const falecimento = control.get('dataFalecimento')?.value;
+
+  if (nascimento && falecimento) {
+    const dataNasc = new Date(nascimento);
+    const dataFalec = new Date(falecimento);
+
+    if (dataFalec < dataNasc) {
+      return { falecimentoAnteriorNascimento: true };
+    }
+  }
+
+  return null;
+};
+
+export const validarDataFutura: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const valor = control.value;
+  if (!valor) return null;
+
+  const hoje = new Date();
+  const ano = hoje.getFullYear();
+  const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+  const dia = String(hoje.getDate()).padStart(2, '0');
+  const dataHojeStr = `${ano}-${mes}-${dia}`;
+
+  if (valor > dataHojeStr) {
+    return { dataFutura: true };
+  }
+
+  return null;
+};
+

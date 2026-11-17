@@ -32,13 +32,17 @@ export class ListagemAutores implements OnInit{
   }
 
   deletar(id:string) : void{
-    this.service.deletar(id).subscribe({
-      next: () => {
-        this.toast.success('Autor excluído com sucesso.');
-        this.listarAutores();
-      },
-      error: () => this.toast.error('Erro ao excluir o autor.')
-    });
+    const confirmacao = confirm('Tem certeza que deseja excluir o autor?');
+
+    if(confirmacao){
+      this.service.deletar(id).subscribe({
+        next: () => {
+          this.toast.success('Autor excluído com sucesso.');
+          this.listarAutores();
+        },
+        error: () => this.toast.error('Erro ao excluir o autor.')
+      });
+    }
   }
 
   navegar(pagina : number) {

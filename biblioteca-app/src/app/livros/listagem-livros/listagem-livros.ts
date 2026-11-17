@@ -72,7 +72,7 @@ export class ListagemLivros implements OnInit {
       this.service.deletar(id).subscribe({
         next: () => {
           this.toast.success('Livro excluído com sucesso.');
-          this.listarAutores();
+          this.listarLivros();
         },
         error: () => this.toast.error('Erro ao excluir o livro.')
       });
@@ -128,6 +128,7 @@ export class ListagemLivros implements OnInit {
 
   limparFiltros(){
     this.form.reset();
+    this.aplicarFiltros();
   }
 
   prepararEdicao(idLivro: string){
@@ -136,6 +137,43 @@ export class ListagemLivros implements OnInit {
         id: idLivro
       }
     });
+  }
+
+  navegar(pagina: number) : void {
+    this.paginaAtual = pagina;
+    this.listarLivros();
+  }
+
+  navegarProximo(listagem: PageResult<DetalhesLivros>): void {
+    if(!listagem.last){
+      this.navegar(listagem.number + 1);
+    }
+  }
+
+  navegarAnterior(listagem: PageResult<DetalhesLivros>): void{
+    if(!listagem.first){
+      this.navegar(listagem.number - 1);
+    }
+  }
+
+  paginas(totalPages: number): number[]{
+    return Array.from( { length: totalPages } , (_value, index) => index);
+  }
+
+  registroInicial(listagem: PageResult<DetalhesLivros>): number {
+    if(listagem.totalElements === 0){
+      return 0;
+    }
+
+    return listagem.number * listagem.size +1;
+  }
+
+  registroFinal(listagem: PageResult<DetalhesLivros>): number {
+    if(listagem.totalElements === 0){
+      return 0;
+    }
+
+    return Math.min( (listagem.number + 1) * listagem.size, listagem.totalElements);
   }
 
 }

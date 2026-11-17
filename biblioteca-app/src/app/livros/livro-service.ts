@@ -24,8 +24,8 @@ export class LivroService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  atualizar(id: string) : Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  atualizar(id: string, dados:DadosLivroForm) : Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${id}`, dados);
   }
 
   obterPorId(id: string) : Observable<DetalhesLivros>{

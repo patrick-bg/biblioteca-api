@@ -75,11 +75,18 @@
                 <input 
                     formControlName="dataNascimento"  
                     type="date" id="dataNascimento" 
-                    name="dataNascimento" >
+                    name="dataNascimento" 
+                    [max]="dataMaxima">
+
                 @if(form.controls.dataNascimento.hasError('required') && 
                     form.controls.dataNascimento.touched){
                     <span class="form-hint form-hint-error">A data é obrigatória.</span>
                 }
+
+                @if(form.controls.dataNascimento.hasError('dataFutura') &&
+                    form.controls.dataNascimento.touched){
+                        <span class="form-hint form-hint-error">A data de nascimento não pode ser futura.</span>
+                    }
 
                 @if(form.controls.dataNascimento.hasError('apiError') &&
                  form.controls.dataNascimento.touched){
@@ -94,11 +101,25 @@
                     <input 
                         formControlName="dataFalecimento"  
                         type="date" id="dataFalecimento" 
-                        name="dataFalecimento">
+                        name="dataFalecimento"
+                        [min]="form.get('dataNascimento')?.value"
+                        [max]="dataMaxima">
+
                     @if(form.controls.dataFalecimento.hasError('required') && 
                         form.controls.dataFalecimento.touched){
                         <span class="form-hint form-hint-error">A data é obrigatória.</span>
                     }
+
+                    @if(form.controls.dataFalecimento.hasError('dataFutura') &&
+                    form.controls.dataFalecimento.touched){
+                        <span class="form-hint form-hint-error">A data de falecimento não pode ser futura.</span>
+                    }
+
+                    @if (form.hasError('falecimentoAnteriorNascimento') && form.get('dataFalecimento')?.touched) {
+                        <span class="form-hint form-hint-error">
+                            A data de falecimento não pode ser anterior à data de nascimento.
+                        </span>
+}
 
                     @if(form.controls.dataFalecimento.hasError('apiError') &&
                     form.controls.dataFalecimento.touched){
@@ -111,11 +132,19 @@
 
             <div class="form-group">
                 <label for="paisOrigem">País de Origem: *</label>
-                <input 
-                    formControlName="paisOrigem" 
-                    type="text" id="paisOrigem" 
-                    name="paisOrigem" 
-                    placeholder="Ex: Brasil" />
+                <select formControlName="paisOrigem">
+                    <option value="">Selecione...</option>
+                    <option value="BRASIL">Brasil</option>
+                    <option value="EUA">EUA</option>
+                    <option value="REINO_UNIDO">Reino Unido</option>
+                    <option value="JAPAO">Japão</option>
+                    <option value="CHINA">China</option>
+                    <option value="PORTUGAL">Portugal</option>
+                    <option value="ESPANHA">Espanha</option>
+                    <option value="HOLANDA">Holanda</option>
+                    <option value="RUSSIA">Russia</option>
+                    <option value="ALEMANHA">Alemanha</option>
+                </select>
             </div>
 
             <div class="form-actions">

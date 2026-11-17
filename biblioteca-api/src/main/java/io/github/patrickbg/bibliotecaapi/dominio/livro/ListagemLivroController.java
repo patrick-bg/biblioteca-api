@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.DateTimeException;
@@ -62,6 +59,18 @@ public class ListagemLivroController {
     @GetMapping("autores-listagem")
     public List<AutorDetalhes> listarTodosAutores(){
         return autorService.listaAutores();
+    }
+
+    @GetMapping("autores-cadastro-livro")
+    public List<AutorDetalhes> listarAutores(){
+        return autorService.listaAutores();
+    }
+
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar (@PathVariable UUID id){
+        livroService.deletar(id);
     }
 
     private Year parseAno(String ano) {

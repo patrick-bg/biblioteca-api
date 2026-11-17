@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
-import { DadosLivroForm, StatusLivro } from '../dados-livros';
+import { DadosLivroForm, DetalhesLivros, StatusLivro } from '../dados-livros';
 import { ToastrService } from 'ngx-toastr';
 import { LivroService } from '../livro-service';
 import { DetalhesAutor } from '../../autores/dados-autor';
@@ -52,13 +52,13 @@ export class CadastroLivro implements OnInit {
       preco: new FormControl<string>('', {nonNullable: true, validators: [Validators.required, Validators.min(1)]}),
       autorId: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
       idioma: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
-      formato: new FormControl(<string>'', {nonNullable: true, validators: Validators.required}),
+      formato: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
       editora: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
       dataPublicacao: new FormControl<string>('', {nonNullable: true, validators: [Validators.required, dataPublicacaoValidator({permitirFutura:false, anoMinimo: 0o1})]}),
       paginasTotais: new FormControl<number>(0, {nonNullable: true, validators: [Validators.required, Validators.min(1)]}),
       status: new FormControl<StatusLivro | ''>('', {nonNullable: true, validators: Validators.required}),
-      paginasLidas: new FormControl<number>(0, {nonNullable: true, validators: Validators.min(1)} ),
-      nota: new FormControl<number | null>(null, {nonNullable: true, validators: [Validators.min(0), Validators.max(5), Validators.pattern(/^\d+(\.\d{1})?$/), Validators.required ]}),
+      paginasLidas: new FormControl<number>(0, {nonNullable: true} ),
+      nota: new FormControl<number | null>(null, { validators: [Validators.min(0), Validators.max(5), Validators.pattern(/^\d+(\.\d{1})?$/) ]}),
       urlCapa: new FormControl<string>('', {nonNullable: true}),
     },
     {validators: paginasValidator });
@@ -68,7 +68,7 @@ export class CadastroLivro implements OnInit {
   }
 
   carregarDadosParaEdicao(){
-    this.idLivroEdicao = this.rotaAtiva .snapshot.queryParamMap.get('id');
+    this.idLivroEdicao = this.rotaAtiva.snapshot.queryParamMap.get('id');
 
     if(!this.idLivroEdicao){
       return;
@@ -92,8 +92,9 @@ export class CadastroLivro implements OnInit {
           nota: livro.nota,
           urlCapa: livro.urlCapa
         });
+        this.atualizarValidadoresPorStatus();
       },
-      error: () => this.toast.error('Erro ao carregar os dados do autor.')
+      error: () => this.toast.error('Erro ao carregar os dados do livro.')
     });
   }
 
@@ -124,24 +125,34 @@ export class CadastroLivro implements OnInit {
   }
 
   handleStatusChange(): void{
-    if(!this.isLeituraFinalizada()){
-      this.form.controls.paginasLidas.setValue(this.form.controls.paginasTotais.value);
-      this.form.controls.nota.setValue(null);
-      this.form.controls.nota.setErrors(null);
-    }
+    const { paginasLidas, paginasTotais, nota } = this.form.controls;
 
-    if(this.isLeituraFinalizada()){
-      this.form.controls.paginasLidas.setValue(this.form.controls.paginasTotais.value);
-      this.form.controls.paginasLidas.setErrors(null);
-      this.form.controls.nota.setErrors(null);
+  if (this.isLeituraFinalizada()) {
+    paginasLidas.setValue(paginasTotais.value);
+  } else if (this.isLivroBacklog()) {
+    paginasLidas.setValue(0);
+    nota.setValue(null);
+  } else if (this.isLeituraIniciada()) {
+    if (paginasLidas.value === paginasTotais.value) {
+      paginasLidas.setValue(0);
     }
-
-    if(this.isLivroBacklog()){
-      this.form.controls.paginasLidas.setValue(0);
-      this.form.controls.nota.setValue(null);
-      this.form.controls.nota.setErrors(null);
-    }
+    nota.setValue(null);
   }
+
+  this.atualizarValidadoresPorStatus();
+}
+
+  private atualizarValidadoresPorStatus(): void {
+  const { paginasLidas } = this.form.controls;
+
+  if (this.isLeituraIniciada()) {
+    paginasLidas.setValidators([Validators.required, Validators.min(1)]);
+  } else {
+    paginasLidas.clearValidators();
+  }
+
+  paginasLidas.updateValueAndValidity();
+}
 
   isFormInvalid() : boolean{
     if(this.form.invalid){
@@ -154,16 +165,22 @@ export class CadastroLivro implements OnInit {
 
   handleSubmit(){
     if(this.isFormInvalid()){
+      console.log('Form inválido');
       return;
     }
 
     const dados = this.form.value as DadosLivroForm;
     dados.preco = this.parsePreco(dados.preco);
 
-    this.service.criar(dados).subscribe({
+    const requisicao : Observable<DetalhesLivros | void> = this.idLivroEdicao ?
+    this.service.atualizar(this.idLivroEdicao, dados) :
+    this.service.criar(dados);
+
+   requisicao.subscribe({
       next: () => {
         this.toast.success('Livro cadastrado com sucesso!');
         this.form.reset();
+        this.idLivroEdicao = null;
       },
       error: (error) => this.onApiError(error)
     });

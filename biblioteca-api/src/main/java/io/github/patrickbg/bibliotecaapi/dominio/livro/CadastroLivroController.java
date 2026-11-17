@@ -42,15 +42,5 @@ public class CadastroLivroController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("autores-cadastro-livro")
-    public List<AutorDetalhes> listarAutores(){
-        return autorService.listaAutores();
-    }
 
-
-    @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletar (@PathVariable UUID id){
-        livroService.deletar(id);
-    }
 }
