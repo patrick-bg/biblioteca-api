@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DetalhesLivros, StatusLivro } from '../dados-livros';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { Header } from '../../common/components/header/header';
 import { LivroService } from '../livro-service';
 import { ToastrService } from 'ngx-toastr';
@@ -27,7 +27,7 @@ interface FiltrosForm {
 
 @Component({
   selector: 'app-listagem-livros',
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, Header],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, Header, RouterModule],
   templateUrl: './listagem-livros.html',
   styleUrl: './listagem-livros.scss',
 })
@@ -35,6 +35,7 @@ export class ListagemLivros implements OnInit {
 
   service = inject(LivroService);
   toast = inject(ToastrService);
+  router = inject(Router)
 
   listagem$!: Observable<PageResult<DetalhesLivros>>;
   autores: DetalhesAutor[] = [];
@@ -62,6 +63,20 @@ export class ListagemLivros implements OnInit {
 
     this.listarAutores();
     this.listarLivros();
+  }
+
+  deletar(id: string) : void {
+    const confirmacao = confirm('Tem certeza que deseja excluir o livro?');
+
+    if(confirmacao){
+      this.service.deletar(id).subscribe({
+        next: () => {
+          this.toast.success('Livro excluído com sucesso.');
+          this.listarAutores();
+        },
+        error: () => this.toast.error('Erro ao excluir o livro.')
+      });
+    }
   }
 
   listarAutores(){
@@ -113,6 +128,14 @@ export class ListagemLivros implements OnInit {
 
   limparFiltros(){
     this.form.reset();
+  }
+
+  prepararEdicao(idLivro: string){
+    this.router.navigate(['/paginas/cadastro-livros'], {
+      queryParams: {
+        id: idLivro
+      }
+    });
   }
 
 }

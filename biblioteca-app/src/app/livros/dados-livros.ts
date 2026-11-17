@@ -18,6 +18,7 @@ export class DadosLivroForm {
 }
 
 export class DetalhesLivros{
+    id!: string;
     titulo!: string;
     isbn!: string;
     genero!: string;

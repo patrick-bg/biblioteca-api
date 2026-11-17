@@ -24,6 +24,15 @@ export class LivroService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
+  atualizar(id: string) : Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  obterPorId(id: string) : Observable<DetalhesLivros>{
+    console.log('Obter por ID com sucesso!');
+    return this.http.get<DetalhesLivros>(`${this.baseUrl}/${id}`);
+  }
+
   listrar(filtros: FiltroLivro): Observable<PageResult<DetalhesLivros>>{
     let params = new HttpParams();
 

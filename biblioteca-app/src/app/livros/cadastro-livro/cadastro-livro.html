@@ -2,7 +2,7 @@
 
 <main class="content">
     <div class="card">
-        <h2>Novo Livro</h2>
+        <h2>{{ idLivroEdicao ? 'Edição de Livro' : 'Novo livro'}}</h2>
 
         <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="form">
 
@@ -346,8 +346,15 @@
             </div>
 
             <div class="form-action">
-                <button type="submit" class="btn-primary">Salvar</button>
-                <button type="button" class="btn-secondary">Cancelar</button>
+                <button type="submit" class="btn-primary">
+                    {{ idLivroEdicao ? 'Atualizar' : 'Salvar'}}
+                </button>
+                <button 
+                    type="button" 
+                    class="btn-secondary"
+                    [routerLink]="['/paginas/listagem-livros']">
+                    Cancelar
+                </button>
             </div>
 
         </form>

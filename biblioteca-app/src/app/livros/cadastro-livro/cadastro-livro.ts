@@ -6,10 +6,11 @@ import { LivroService } from '../livro-service';
 import { DetalhesAutor } from '../../autores/dados-autor';
 import { forkJoin, Observable } from 'rxjs';
 import { Header } from '../../common/components/header/header';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ValidationErrorResponse } from '../../common/validation/validation-error-model';
+import { RouterLink } from '@angular/router';
 
 interface CadastroLivroForm{
   titulo: FormControl<string>;
@@ -30,7 +31,7 @@ interface CadastroLivroForm{
 
 @Component({
   selector: 'app-cadastro-livro',
-  imports: [Header, ReactiveFormsModule, CommonModule, NgxMaskDirective],
+  imports: [Header, ReactiveFormsModule, CommonModule, NgxMaskDirective, RouterLink, RouterModule],
   templateUrl: './cadastro-livro.html',
   styleUrl: './cadastro-livro.scss',
 })
@@ -38,8 +39,9 @@ interface CadastroLivroForm{
 export class CadastroLivro implements OnInit {
   form!: FormGroup<CadastroLivroForm>;
   toast = inject(ToastrService);
+  rotaAtiva = inject (ActivatedRoute);
   service = inject(LivroService);
-
+  idLivroEdicao?: string | null;
   autoresDisponiveis: DetalhesAutor[] = [];
 
   ngOnInit(): void {
@@ -62,7 +64,37 @@ export class CadastroLivro implements OnInit {
     {validators: paginasValidator });
 
     this.inicializarDropDowns();
+    this.carregarDadosParaEdicao();
+  }
 
+  carregarDadosParaEdicao(){
+    this.idLivroEdicao = this.rotaAtiva .snapshot.queryParamMap.get('id');
+
+    if(!this.idLivroEdicao){
+      return;
+    }
+
+    this.service.obterPorId(this.idLivroEdicao).subscribe({
+      next: (livro) => {
+        this.form.patchValue({
+          titulo: livro.titulo,
+          isbn: livro.isbn,
+          genero: livro.genero,
+          preco: livro.preco,
+          autorId: livro.autorId,
+          idioma: livro.idioma,
+          formato: livro.formato,
+          editora: livro.editora,
+          dataPublicacao: livro.dataPublicacao ? new Date(livro.dataPublicacao).toISOString().split('T')[0] : '',
+          paginasTotais: livro.paginasTotais,
+          status: livro.status as "" | StatusLivro,
+          paginasLidas: livro.paginasLidas,
+          nota: livro.nota,
+          urlCapa: livro.urlCapa
+        });
+      },
+      error: () => this.toast.error('Erro ao carregar os dados do autor.')
+    });
   }
 
   inicializarDropDowns(){

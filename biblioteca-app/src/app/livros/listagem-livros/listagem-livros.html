@@ -85,8 +85,71 @@
                                 Limpar
                         </button>
                     </div>
-
                 </form>
+
+                @if (listagem$ | async; as listagem) {
+                <table class="datatable">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Capa</th>
+                            <th>Título</th>
+                            <th>ISBN</th>
+                            <th>Autor(a)</th>
+                            <th>Genero</th>
+                            <th>Preço</th>
+                            <th>Idioma</th>
+                            <th>Formato</th>
+                            <th>Editora</th>
+                            <th>Data Publicação</th>
+                            <th>Total de páginas</th>
+                            <th>Status da Leitura</th>
+                            <th>Nota</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @for (livro of listagem.content; track livro.id) {
+                            <tr>
+                                <td>
+                                    @if (livro.urlCapa) {
+                                        <img [src]="livro.urlCapa" [alt]="livro.titulo" width="50">
+                                    }
+                                </td>
+                                <td>{{ livro.titulo }}</td>
+                                <td>{{ livro.isbn }}</td>
+                                <td>{{ livro.autorNome }}</td>
+                                <td>{{ livro.genero }}</td>
+                                <td>{{ livro.preco | currency: 'BRL'}}</td>
+                                <td>{{ livro.idioma }}</td>
+                                <td>{{ livro.formato }}</td>
+                                <td>{{ livro.editora }}</td>
+                                <td> {{ livro.dataPublicacao | date: 'dd/MM/yyyy' }}</td>
+                                <td>{{ livro.paginasTotais }}</td>
+                                <td>{{ livro.status }}</td>
+                                <td>{{ livro.nota }}</td>
+
+                                 <td class="text-center">
+                                    <button class="icon-btn" title="Editar"
+                                        (click)="prepararEdicao(livro.id)">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button class="icon-btn danger" title="Excluir"
+                                        (click)="deletar(livro.id)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        } @empty {
+                            <tr>
+                                <td colspan="13">Nenhum Livro encontrado.</td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            }
 
             </div>
         </div>

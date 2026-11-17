@@ -46,7 +46,7 @@ export class CadastroAutor implements OnInit {
   }
 
   carregarDadosParaEdicao(){
-    this.idAutorEdicao = this.rotaAtiva.snapshot.queryParamMap.get('id')
+    this.idAutorEdicao = this.rotaAtiva.snapshot.queryParamMap.get('id');
 
     if(!this.idAutorEdicao){
       return;
