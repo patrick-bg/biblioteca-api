@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ValidationErrorResponse } from '../../common/validation/validation-error-model';
 import { RouterLink } from '@angular/router';
+import { BuscaLivro } from '../busca-livro/busca-livro-service';
 
 interface CadastroLivroForm{
   titulo: FormControl<string>;
@@ -45,6 +46,9 @@ export class CadastroLivro implements OnInit {
   idLivroEdicao?: string | null;
   autoresDisponiveis: DetalhesAutor[] = [];
   mesAtualMax: string;
+  campoPesquisa = new FormControl('');
+  resultados: any[] = [];
+  
 
   constructor(private fb: FormBuilder){
     const hoje = new Date();
@@ -76,6 +80,15 @@ export class CadastroLivro implements OnInit {
     this.inicializarDropDowns();
     this.carregarDadosParaEdicao();
   }
+
+  selecionarLivro(livro: BuscaLivro) {
+      this.form.patchValue({
+        titulo: livro.titulo,
+        isbn: livro.isbn,
+        urlCapa: livro.urlCapa
+      });
+      this.resultados = []; 
+    }
 
   get mesMinimoPublicacao(): string | null {
     const pub = this.form.get('dataPublicacao')?.value;
