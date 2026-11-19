@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors, FormBuilder } from '@angular/forms';
 import { DadosLivroForm, DetalhesLivros, StatusLivro } from '../dados-livros';
 import { ToastrService } from 'ngx-toastr';
 import { LivroService } from '../livro-service';
@@ -26,6 +26,7 @@ interface CadastroLivroForm{
   status: FormControl<StatusLivro | ''>;
   paginasLidas: FormControl<number | null>;
   nota: FormControl<number | null>;
+  lidoEm: FormControl<string>;
   urlCapa: FormControl<string | null>;
 }
 
@@ -43,6 +44,14 @@ export class CadastroLivro implements OnInit {
   service = inject(LivroService);
   idLivroEdicao?: string | null;
   autoresDisponiveis: DetalhesAutor[] = [];
+  mesAtualMax: string;
+
+  constructor(private fb: FormBuilder){
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    this.mesAtualMax = `${ano}-${mes}`;
+  }
 
   ngOnInit(): void {
     this.form = new FormGroup<CadastroLivroForm>({
@@ -54,17 +63,23 @@ export class CadastroLivro implements OnInit {
       idioma: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
       formato: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
       editora: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
-      dataPublicacao: new FormControl<string>('', {nonNullable: true, validators: [Validators.required, dataPublicacaoValidator({permitirFutura:false, anoMinimo: 0o1})]}),
+      dataPublicacao: new FormControl<string>('', {nonNullable: true, validators: [Validators.required, dataPublicacaoValidator({permitirFutura:false, anoMinimo: 1})]}),
       paginasTotais: new FormControl<number>(0, {nonNullable: true, validators: [Validators.required, Validators.min(1)]}),
       status: new FormControl<StatusLivro | ''>('', {nonNullable: true, validators: Validators.required}),
-      paginasLidas: new FormControl<number>(0, {nonNullable: true} ),
+      paginasLidas: new FormControl<number>(0, {nonNullable: true, validators: [Validators.min(0)]} ),
       nota: new FormControl<number | null>(null, { validators: [Validators.min(0), Validators.max(5), Validators.pattern(/^\d+(\.\d{1})?$/) ]}),
+      lidoEm: new FormControl<string>('', {nonNullable: true, validators: [dataLeituraValidator()]}), 
       urlCapa: new FormControl<string>('', {nonNullable: true}),
     },
-    {validators: paginasValidator });
+    {validators: [paginasValidator, ordemDatasLivroValidator('dataPublicacao', 'lidoEm')] });
 
     this.inicializarDropDowns();
     this.carregarDadosParaEdicao();
+  }
+
+  get mesMinimoPublicacao(): string | null {
+    const pub = this.form.get('dataPublicacao')?.value;
+    return pub && pub.length >= 7 ? pub.substring(0,7) : null;
   }
 
   carregarDadosParaEdicao(){
@@ -90,6 +105,7 @@ export class CadastroLivro implements OnInit {
           status: livro.status as "" | StatusLivro,
           paginasLidas: livro.paginasLidas,
           nota: livro.nota,
+          lidoEm: livro.lidoEm,
           urlCapa: livro.urlCapa
         });
         this.atualizarValidadoresPorStatus();
@@ -271,5 +287,76 @@ export function dataPublicacaoValidator(opcoes?: {
       }
     }
     return null; 
+  };
+}
+
+export function dataLeituraValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const valor = control.value;
+
+    if (!valor) {
+      return null;
+    }
+
+    const regexFormato = /^\d{4}-\d{2}$/;
+    if (!regexFormato.test(valor)) {
+      return { formatoInvalido: true };
+    }
+
+    const [anoStr, mesStr] = valor.split('-');
+    const ano = Number(anoStr);
+    const mes = Number(mesStr);
+
+    if (mes < 1 || mes > 12) {
+      return { mesInvalido: true };
+    }
+
+    const hoje = new Date();
+    const anoAtual = hoje.getFullYear();
+    const mesAtual = hoje.getMonth() + 1;
+
+    if (ano > anoAtual || (ano === anoAtual && mes > mesAtual)) {
+      return { dataFutura: true };
+    }
+
+    return null;
+  };
+}
+
+export function ordemDatasLivroValidator(
+  campoPublicacao = 'dataPublicacao',
+  campoLeitura = 'lidoEm'
+): ValidatorFn {
+  return (formGroup: AbstractControl): ValidationErrors | null => {
+    const pubControl = formGroup.get(campoPublicacao);
+    const leituraControl = formGroup.get(campoLeitura);
+
+    if (!pubControl || !leituraControl) return null;
+
+    const dataPub = pubControl.value;       
+    const dataLeitura = leituraControl.value; 
+
+    
+    if (!dataPub || !dataLeitura || dataPub.length < 7 || dataLeitura.length < 7) {
+      return null;
+    }
+
+    const [anoPub, mesPub] = dataPub.split('-').map(Number);
+    const [anoLeitura, mesLeitura] = dataLeitura.split('-').map(Number);
+
+    const leituraAntesDaPublicacao =
+      anoLeitura < anoPub || (anoLeitura === anoPub && mesLeitura < mesPub);
+
+    if (leituraAntesDaPublicacao) {
+      leituraControl.setErrors({ ...leituraControl.errors, leituraAnteriorPublicacao: true });
+      return { leituraAnteriorPublicacao: true };
+    } else {
+      if (leituraControl.hasError('leituraAnteriorPublicacao')) {
+        const { leituraAnteriorPublicacao, ...outrosErros } = leituraControl.errors || {};
+        leituraControl.setErrors(Object.keys(outrosErros).length ? outrosErros : null);
+      }
+    }
+
+    return null;
   };
 }

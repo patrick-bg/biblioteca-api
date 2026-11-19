@@ -103,7 +103,8 @@ public class LivroService {
             String titulo,
             GeneroAutor generoAutor,
             PaisOrigemAutor paisOrigem,
-            String editora){
+            String editora,
+            YearMonth lidoEm){
         Specification<LivroEntity> spec = Specification.unrestricted();
 
         if(status != null){
@@ -140,6 +141,10 @@ public class LivroService {
 
         if(editora != null){
             spec = spec.and(editoraLike(editora));
+        }
+
+        if(lidoEm != null){
+            spec = spec.and(mesEqual(lidoEm));
         }
 
         var result = livroRepository.findAll(spec,pageRequest);

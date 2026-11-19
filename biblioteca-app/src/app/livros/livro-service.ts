@@ -40,6 +40,10 @@ export class LivroService {
       params = params.set('ano', filtros.ano);
     }
 
+    if(filtros.lidoEm){
+      params = params.set('lido-em', filtros.lidoEm);
+    }
+
     if(filtros.status){
       params = params.set('status', filtros.status);
     }

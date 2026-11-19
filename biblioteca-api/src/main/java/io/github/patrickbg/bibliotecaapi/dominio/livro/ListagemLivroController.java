@@ -17,6 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.DateTimeException;
 import java.time.Year;
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +44,8 @@ public class ListagemLivroController {
             @RequestParam(value = "titulo", required = false) String titulo,
             @RequestParam(value = "autor-genero", required = false) String generoAutor,
             @RequestParam(value = "pais-origem", required = false) String paisOrigem,
-            @RequestParam(value = "editora", required = false) String editora
+            @RequestParam(value = "editora", required = false) String editora,
+            @RequestParam(value = "lido-em", required = false) String lidoEm
     ) {
         var pageRequest = PageRequest.of(page, size);
         var anoConvertido = parseAno(ano);
@@ -51,9 +54,10 @@ public class ListagemLivroController {
         var idiomaConvertido = parseIdioma(idioma);
         var generoAutorConvertido = parseGeneroAutor(generoAutor);
         var paisOrigemConvertido = parsePaisOrigemAutor(paisOrigem);
+        var lidoEmConvertido = parseMes(lidoEm);
 
 
-        return livroService.listar(pageRequest,anoConvertido, statusLivro, autorId, generoConvertido, idiomaConvertido, titulo, generoAutorConvertido, paisOrigemConvertido, editora);
+        return livroService.listar(pageRequest,anoConvertido, statusLivro, autorId, generoConvertido, idiomaConvertido, titulo, generoAutorConvertido, paisOrigemConvertido, editora, lidoEmConvertido);
     }
 
     @GetMapping("autores-listagem")
@@ -142,6 +146,19 @@ public class ListagemLivroController {
             return PaisOrigemAutor.valueOf(paisOrigem);
         }catch (IllegalArgumentException e){
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Parâmetro 'paisOrigem' inválido.");
+        }
+    }
+
+    private YearMonth parseMes(String mes){
+        if (mes == null || mes.isBlank()) {
+            return null;
+        }
+
+        try {
+            return YearMonth.parse(mes);
+        }
+        catch (DateTimeParseException e){
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "Parâmetro 'lidoEm' inválido, use o formato yyyy-MM.");
         }
     }
 

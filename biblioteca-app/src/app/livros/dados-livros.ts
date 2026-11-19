@@ -14,6 +14,7 @@ export class DadosLivroForm {
     status!: StatusLivro;
     paginasLidas?: number | null;
     nota?: number | null;
+    lidoEm?: string;
     urlCapa?: string | null;
 }
 
@@ -32,6 +33,7 @@ export class DetalhesLivros{
     status!: StatusLivro;
     paginasLidas?: number;
     nota?: number | null;
+    lidoEm?: string;
     urlCapa?: string | null;
     autorNome?: string | null;
 }
@@ -47,6 +49,7 @@ export class FiltroLivro{
     ano?: string;
     status?: StatusLivro;
     nota?: number;
+    lidoEm?: string
     autorNome?: string;
     autorGenero?: string;
     paisOrigemAutor?: string;

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.time.YearMonth;
 import java.util.UUID;
 
 public class LivroSpecs {
@@ -49,6 +50,15 @@ public class LivroSpecs {
 
             return criteriaBuilder.between(root.get("dataPublicacao"), inicioAno, fimAno);
         };
+    }
+
+    public static Specification<LivroEntity> mesEqual(YearMonth mes){
+        return ((root, query, criteriaBuilder) ->  {
+            LocalDate inicioMes = mes.atDay(1);
+            LocalDate fimMes = mes.atEndOfMonth();
+
+            return criteriaBuilder.between(root.get("lidoEm"), inicioMes, fimMes);
+        });
     }
 
     public static Specification<LivroEntity> generoEqual(GeneroLivro genero) {

@@ -7,6 +7,7 @@ import io.github.patrickbg.bibliotecaapi.dominio.livro.model.StatusLivro;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 
 public record LivroDetalhes(
         String id,
@@ -22,6 +23,7 @@ public record LivroDetalhes(
         Integer paginasLidas,
         StatusLivro status,
         BigDecimal nota,
+        YearMonth lidoEm,
         String autorNome,
         String autorId,
         String urlCapa

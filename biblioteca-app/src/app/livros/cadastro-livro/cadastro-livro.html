@@ -331,6 +331,26 @@
                         </span>
                     }
                 </div>
+
+                <div class="form-group">
+                <label for="lidoEm">Leitura finalizada em: (Mês/Ano)</label>
+                <input 
+                    id="lidoEm" 
+                    nome="lidoEm" 
+                    formControlName="lidoEm" 
+                    type="month"
+                    [min]="mesMinimoPublicacao"
+                    [max]="mesAtualMax">
+                @if(form.controls.lidoEm.hasError('required') && form.controls.lidoEm.touched){
+                    <span class="form-hint form-hint-error">A data é obrigatória.</span>
+                }
+
+                @if(form.controls.lidoEm.hasError('apiError') && form.controls.lidoEm.touched){
+                    <span class="form-hint form-hint-error">
+                        {{form.get('lidoEm')?.errors?.['apiError'] }}
+                    </span>
+                }
+            </div>
             }
 
             <div class="form-group">

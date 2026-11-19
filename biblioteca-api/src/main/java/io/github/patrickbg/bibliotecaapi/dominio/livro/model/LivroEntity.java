@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.UUID;
 
 @Entity
@@ -66,6 +67,9 @@ public class LivroEntity {
 
     @Column(name = "data_atualizacao")
     private LocalDate dataAtualizacao;
+
+    @Column(name = "lido_em")
+    private YearMonth lidoEm;
 
     @Column(name = "url_capa")
     private String urlCapa;

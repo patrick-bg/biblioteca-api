@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.ISBN;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.UUID;
 
 public record LivroForm (
@@ -39,6 +40,7 @@ public record LivroForm (
         @DecimalMin(value = "0.1", message = "Nota deve ser maior que zero.")
         @DecimalMax(value = "5.0", message = "Nota máxima de 5.0.")
         BigDecimal nota,
+        YearMonth lidoEm,
         @Pattern(
                 regexp = "^https?://[^\s/$.?#].[^\s]*$",
                 message = "Informe uma URL HTTP ou HTTPS válida"
