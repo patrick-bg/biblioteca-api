@@ -64,7 +64,7 @@ public class DashboardService {
                 mediaNotaTotal,
                 valorTotalInvestido);
 
-        var lidosPorGeneroNoAno = livroRepository.buscarLidosPorGeneroAutorNoPeriodo(StatusLivro.LIDO, inicioAno, fimAno);
+        var lidosPorGeneroNoAno = livroRepository.buscarLidosPorGeneroNoPeriodo(StatusLivro.LIDO, inicioAno, fimAno);
         var autoresMaisLidosNoAno = livroRepository.buscarRankingAutoresNoPeriodo(
                 StatusLivro.LIDO,inicioAno,fimAno, PageRequest.of(0, 5)
         );

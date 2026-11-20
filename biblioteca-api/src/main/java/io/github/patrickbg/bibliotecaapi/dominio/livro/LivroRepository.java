@@ -141,6 +141,7 @@ public interface LivroRepository
             """)
     List<ContagemResumo<GeneroLivro>> contarEstantePorGenero();
 
+    // Metodo correto para buscar o gênero do autor na estante inteira
     @Query("""
             SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.ContagemResumo(l.autor.generoAutor, COUNT(l))
             FROM LivroEntity l

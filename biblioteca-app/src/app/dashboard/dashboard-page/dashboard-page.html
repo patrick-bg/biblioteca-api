@@ -1,1 +1,156 @@
-<p>dashboard-page works!</p>
+    <app-header titulo="Dashboard"></app-header>
+
+<main class="content">
+  <!-- Barra superior com filtro de ano -->
+  <div class="dashboard-toolbar">
+    <div class="filtro-ano">
+      <label for="anoSelect">Ano de referência:</label>
+      <select
+        id="anoSelect"
+        [(ngModel)]="anoSelecionado"
+        (ngModelChange)="aoMudarAno($event)">
+        @for (ano of anosDisponiveis; track ano) {
+          <option [value]="ano">{{ ano }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (erro) {
+    <div class="error-banner">{{ erro }}</div>
+  }
+
+  @if (dashboard$ | async; as dashboard) {
+    <!-- 1. Grid de Cards de Métricas -->
+    <section class="dashboard-grid">
+      <div class="metric-card metric-card-balance">
+        <span class="metric-label">Leitura atual</span>
+        <strong [class.lendo]="dashboard.resumo.lendo > 0">
+          {{ dashboard.resumo.lendo }} livro(s) em leitura
+        </strong>
+        <small>Backlog: {{ dashboard.resumo.backlog }} na fila</small>
+      </div>
+
+      <div class="metric-card metric-card-balance">
+        <span class="metric-label">Lidos em {{ dashboard.ano }}</span>
+        <strong>{{ dashboard.resumo.lidos }} livro(s)</strong>
+        <small>{{ dashboard.resumo.paginasLidasNoAno | number }} páginas lidas no ano</small>
+      </div>
+
+      <div class="metric-card metric-card-balance">
+        <span class="metric-label">Total de Páginas Lidas</span>
+        <strong>{{ dashboard.resumo.paginasLidasTotais | number }}</strong>
+        <small>Soma histórica (concluídos + em andamento)</small>
+      </div>
+
+      <div class="metric-card metric-card-balance">
+        <span class="metric-label">Média de Avaliações</span>
+        <strong>{{ dashboard.resumo.mediaNotaNoAno | number:'1.1-2' }} / 5</strong>
+        <small>Média histórica geral: {{ dashboard.resumo.mediaNotaTotal | number:'1.1-2' }}</small>
+      </div>
+
+      <div class="metric-card metric-card-balance">
+        <span class="metric-label">Investimento na Estante</span>
+        <strong>{{ dashboard.resumo.valorTotalInvestido | currency:'BRL':'symbol':'1.2-2' }}</strong>
+        <small>Valor total acumulado</small>
+      </div>
+    </section>
+
+    <!-- 2. Grid de Detalhes Anuais e Estante -->
+    <section class="dashboard-grid">
+      <!-- Autores mais lidos no ano -->
+      <div class="metric-card metric-card-total">
+        <span class="metric-label">Autores Mais Lidos ({{ dashboard.ano }})</span>
+        @if (dashboard.autoresMaisLidosNoAno.length === 0) {
+          <p class="empty-state">Nenhum livro concluído neste ano.</p>
+        } @else {
+          <ul class="ranking-list">
+            @for (autor of dashboard.autoresMaisLidosNoAno; track autor.autorId) {
+              <li>
+                <span class="metric-label">{{ autor.nome }}: {{ autor.livrosLidos }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <!-- Gêneros mais lidos no ano -->
+      <div class="metric-card metric-card-total">
+        <span class="metric-label">Lidos por Gênero ({{ dashboard.ano }})</span>
+        @if (dashboard.lidosPorGeneroNoAno.length === 0) {
+          <p class="empty-state">Nenhum gênero registrado neste ano.</p>
+        } @else {
+          <ul class="ranking-list">
+            @for (item of dashboard.lidosPorGeneroNoAno; track item.genero) {
+              <li>
+                <span class="metric-label">{{ item.genero }}: {{ item.lidos }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <!-- Estante por Gênero -->
+      <div class="metric-card metric-card-total">
+        <span class="metric-label">Estante por Gênero</span>
+        <ul class="ranking-list">
+          @for (item of dashboard.estantePorGenero; track item.categoria) {
+            <li>
+              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Estante por Formato -->
+      <div class="metric-card metric-card-total">
+        <span class="metric-label">Estante por Formato</span>
+        <ul class="ranking-list">
+          @for (item of dashboard.estantePorFormato; track item.categoria) {
+            <li>
+              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Estante por Idioma -->
+      <div class="metric-card metric-card-total">
+        <span class="metric-label">Estante por Idioma</span>
+        <ul class="ranking-list">
+          @for (item of dashboard.estantePorIdioma; track item.categoria) {
+            <li>
+              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Estante por País do Autor -->
+      <div class="metric-card metric-card-total">
+        <span class="metric-label">Estante por País do Autor</span>
+        <ul class="ranking-list">
+          @for (item of dashboard.estantePorPaisAutor; track item.categoria) {
+            <li>
+              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Estante por Gênero do Autor -->
+      <div class="metric-card metric-card-total">
+        <span class="metric-label">Estante por Gênero do Autor</span>
+        <ul class="ranking-list">
+          @for (item of dashboard.estantePorGeneroAutor; track item.categoria) {
+            <li>
+              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+  } @else if (!erro) {
+    <p class="loading-state">Carregando dados do dashboard...</p>
+  }
+</main>
