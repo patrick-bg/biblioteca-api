@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Year;
 
 @RestController
-@RequestMapping("/dashboard")
+@RequestMapping("dashboard")
 @RequiredArgsConstructor
 @Validated
 public class DashboardController {
