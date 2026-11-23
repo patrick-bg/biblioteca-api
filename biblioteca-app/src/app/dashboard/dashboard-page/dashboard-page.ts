@@ -49,5 +49,14 @@ export class DashboardPage implements OnInit{
     this.anoSelecionado = Number(novoAno);
     this.anoSubject.next(this.anoSelecionado);
   }
+
+  percentual(valor: number, total: number){
+    if(!total){
+      return 0;
+    }
+
+    const resultado = (valor / total) * 100;
+    return Math.round(resultado);
+  }
   
 }

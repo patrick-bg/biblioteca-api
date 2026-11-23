@@ -35,6 +35,9 @@ public class DashboardService {
                         resumo -> (int) resumo.quantidade()
                 ));
 
+        int totalLivrosEstante = contagemPorStatus.values()
+                .stream().mapToInt(Integer::intValue).sum();
+
         int backlog = contagemPorStatus.getOrDefault(StatusLivro.BACKLOG, 0);
         int lendo = contagemPorStatus.getOrDefault(StatusLivro.LENDO, 0);
         Integer lidosNoAno = livroRepository.countByStatusAndLidoEmBetween(StatusLivro.LIDO, inicioAno, fimAno);
@@ -55,6 +58,7 @@ public class DashboardService {
         BigDecimal valorTotalInvestido = livroRepository.somarValorTotalInvestido();
 
         ResumoLeituras resumoLeituras = new ResumoLeituras(
+                totalLivrosEstante,
                 backlog,
                 lendo,
                 lidos,

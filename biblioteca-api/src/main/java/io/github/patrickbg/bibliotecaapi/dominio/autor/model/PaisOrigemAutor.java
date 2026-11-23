@@ -8,6 +8,7 @@ public enum PaisOrigemAutor {
     CHINA,
     PORTUGAL,
     ESPANHA,
+    GRECIA,
     HOLANDA,
     RUSSIA,
     ALEMANHA

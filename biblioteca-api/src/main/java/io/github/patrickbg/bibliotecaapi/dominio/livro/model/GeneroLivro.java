@@ -8,6 +8,7 @@ public enum GeneroLivro {
     ROMANCE_HISTORICO,
     PSICOLOGIA,
     CIENCIAS_POLITICAS,
+    CIENCIAS_BIOLOGICAS,
     MANGA,
     DRAMA,
     BIOGRAFIA,

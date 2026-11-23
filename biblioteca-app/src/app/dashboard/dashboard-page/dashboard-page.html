@@ -2,10 +2,10 @@
 
 <main class="content">
   <!-- Barra superior com filtro de ano -->
-  <div class="dashboard-toolbar">
-    <div class="filtro-ano">
-      <label for="anoSelect">Ano de referência:</label>
+    <div class="filter-bar">
+      <label class="metric-label" for="anoSelect">Ano de referência:</label>
       <select
+        class="filter-select"
         id="anoSelect"
         [(ngModel)]="anoSelecionado"
         (ngModelChange)="aoMudarAno($event)">
@@ -14,7 +14,6 @@
         }
       </select>
     </div>
-  </div>
 
   @if (erro) {
     <div class="error-banner">{{ erro }}</div>
@@ -23,7 +22,7 @@
   @if (dashboard$ | async; as dashboard) {
     <!-- 1. Grid de Cards de Métricas -->
     <section class="dashboard-grid">
-      <div class="metric-card metric-card-balance">
+      <div class="metric-card metric-card-reading">
         <span class="metric-label">Leitura atual</span>
         <strong [class.lendo]="dashboard.resumo.lendo > 0">
           {{ dashboard.resumo.lendo }} livro(s) em leitura
@@ -31,123 +30,226 @@
         <small>Backlog: {{ dashboard.resumo.backlog }} na fila</small>
       </div>
 
-      <div class="metric-card metric-card-balance">
+      <div class="metric-card metric-card-reading">
         <span class="metric-label">Lidos em {{ dashboard.ano }}</span>
         <strong>{{ dashboard.resumo.lidos }} livro(s)</strong>
         <small>{{ dashboard.resumo.paginasLidasNoAno | number }} páginas lidas no ano</small>
       </div>
 
-      <div class="metric-card metric-card-balance">
+      <div class="metric-card metric-card-reading">
+        <span class="metric-label">Média de Avaliações</span>
+        <strong>{{ dashboard.resumo.mediaNotaNoAno | number:'1.1-2' }} / 5.00</strong>
+        <small>Média histórica geral: {{ dashboard.resumo.mediaNotaTotal | number:'1.1-2' }}</small>
+      </div>
+
+    </section>
+
+    <section class="dashboard-grid">
+
+      <div class="metric-card metric-card-reading">
+        <span class="metric-label">Total de livros na estante</span>
+        <strong>{{ dashboard.resumo.totalLivrosEstante }} livro(s)</strong>
+        <small>Backlog: {{ dashboard.resumo.backlog }} na fila</small>
+      </div>
+
+      <div class="metric-card metric-card-reading">
+        <span class="metric-label">Investimento na Estante</span>
+        <strong>{{ dashboard.resumo.valorTotalInvestido | currency:'BRL':'symbol':'1.2-2' }}</strong>
+        <small>Valor total acumulado</small>
+      </div>
+
+      <div class="metric-card metric-card-reading">
         <span class="metric-label">Total de Páginas Lidas</span>
         <strong>{{ dashboard.resumo.paginasLidasTotais | number }}</strong>
         <small>Soma histórica (concluídos + em andamento)</small>
       </div>
 
-      <div class="metric-card metric-card-balance">
-        <span class="metric-label">Média de Avaliações</span>
-        <strong>{{ dashboard.resumo.mediaNotaNoAno | number:'1.1-2' }} / 5</strong>
-        <small>Média histórica geral: {{ dashboard.resumo.mediaNotaTotal | number:'1.1-2' }}</small>
-      </div>
-
-      <div class="metric-card metric-card-balance">
-        <span class="metric-label">Investimento na Estante</span>
-        <strong>{{ dashboard.resumo.valorTotalInvestido | currency:'BRL':'symbol':'1.2-2' }}</strong>
-        <small>Valor total acumulado</small>
-      </div>
     </section>
+    
 
     <!-- 2. Grid de Detalhes Anuais e Estante -->
-    <section class="dashboard-grid">
+    <section class="charts-grid">
       <!-- Autores mais lidos no ano -->
-      <div class="metric-card metric-card-total">
-        <span class="metric-label">Autores Mais Lidos ({{ dashboard.ano }})</span>
-        @if (dashboard.autoresMaisLidosNoAno.length === 0) {
-          <p class="empty-state">Nenhum livro concluído neste ano.</p>
-        } @else {
-          <ul class="ranking-list">
-            @for (autor of dashboard.autoresMaisLidosNoAno; track autor.autorId) {
-              <li>
-                <span class="metric-label">{{ autor.nome }}: {{ autor.livrosLidos }}</span>
-              </li>
-            }
-          </ul>
-        }
+      <div class="chart-panel metric-card-goal">
+        <div class="chart-header">
+          <h2>Autores mais lidos </h2>
+          <span>({{ dashboard.ano }})</span>
+        </div>
+
+          @if (dashboard.autoresMaisLidosNoAno.length === 0) {
+            <p class="empty-state">Nenhum livro concluído neste ano.</p>
+          } @else {
+              @for (autor of dashboard.autoresMaisLidosNoAno; track autor.autorId) {
+                <div class="comparison-chart">
+                  <div class="comparison-row">
+                    <div class="comparison-label">
+                      <span>{{ autor.nome}}</span>
+                      <strong> {{ autor.livrosLidos}}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bar-track">
+                  <div class="bar-fill category"
+                    [style.width.%]="percentual(autor.livrosLidos, dashboard.resumo.lidos)">
+
+                  </div>
+                </div>
+              }
+          }
       </div>
 
       <!-- Gêneros mais lidos no ano -->
-      <div class="metric-card metric-card-total">
-        <span class="metric-label">Lidos por Gênero ({{ dashboard.ano }})</span>
+      <div class="metric-card metric-card-goal">
+        <div class="chart-header">
+          <h2>Lidos por gênero</h2>
+          <span>({{ dashboard.ano }})</span>
+        </div>
         @if (dashboard.lidosPorGeneroNoAno.length === 0) {
           <p class="empty-state">Nenhum gênero registrado neste ano.</p>
         } @else {
-          <ul class="ranking-list">
             @for (item of dashboard.lidosPorGeneroNoAno; track item.genero) {
-              <li>
-                <span class="metric-label">{{ item.genero }}: {{ item.lidos }}</span>
-              </li>
+              <div class="comparison-chart">
+                  <div class="comparison-row">
+                    <div class="comparison-label">
+                      <span>{{ item.genero}}</span>
+                      <strong> {{ item.lidos}}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill category"
+                    [style.width.%]="percentual(item.lidos, dashboard.resumo.lidos)">
+                  </div>
+                </div>
             }
-          </ul>
+          
         }
       </div>
 
       <!-- Estante por Gênero -->
-      <div class="metric-card metric-card-total">
-        <span class="metric-label">Estante por Gênero</span>
-        <ul class="ranking-list">
+      <div class="metric-card metric-card-goal">
+        <div class="chart-header">
+          <h2>Estante por gênero</h2>
+          <span>GERAL</span>
+        </div>
+        
           @for (item of dashboard.estantePorGenero; track item.categoria) {
-            <li>
-              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
-            </li>
+            <div class="comparison-chart">
+                  <div class="comparison-row">
+                    <div class="comparison-label">
+                      <span>{{ item.categoria}}</span>
+                      <strong> {{ item.quantidade}}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill category"
+                    [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
+                  </div>
+                </div>
           }
-        </ul>
+        
       </div>
 
       <!-- Estante por Formato -->
-      <div class="metric-card metric-card-total">
-        <span class="metric-label">Estante por Formato</span>
-        <ul class="ranking-list">
+      <div class="metric-card metric-card-goal">
+        <div class="chart-header">
+          <h2>Estante por formato</h2>
+          <span>GERAL</span>
+        </div>
+        
           @for (item of dashboard.estantePorFormato; track item.categoria) {
-            <li>
-              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
-            </li>
+            <div class="comparison-chart">
+                  <div class="comparison-row">
+                    <div class="comparison-label">
+                      <span>{{ item.categoria}}</span>
+                      <strong> {{ item.quantidade}}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill category"
+                    [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
+                  </div>
+                </div>
           }
-        </ul>
+        
       </div>
 
       <!-- Estante por Idioma -->
-      <div class="metric-card metric-card-total">
-        <span class="metric-label">Estante por Idioma</span>
-        <ul class="ranking-list">
+      <div class="metric-card metric-card-goal">
+        <div class="chart-header">
+          <h2>Estante por idioma</h2>
+          <span>GERAL</span>
+        </div>
+        
           @for (item of dashboard.estantePorIdioma; track item.categoria) {
-            <li>
-              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
-            </li>
+            <div class="comparison-chart">
+                  <div class="comparison-row">
+                    <div class="comparison-label">
+                      <span>{{ item.categoria}}</span>
+                      <strong> {{ item.quantidade}}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill category"
+                    [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
+                  </div>
+                </div>
           }
-        </ul>
+        
       </div>
 
       <!-- Estante por País do Autor -->
-      <div class="metric-card metric-card-total">
-        <span class="metric-label">Estante por País do Autor</span>
-        <ul class="ranking-list">
+      <div class="metric-card metric-card-goal">
+        <div class="chart-header">
+          <h2>Estante por país do autor</h2>
+          <span>GERAL</span>
+        </div>
+        
           @for (item of dashboard.estantePorPaisAutor; track item.categoria) {
-            <li>
-              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
-            </li>
+            <div class="comparison-chart">
+                  <div class="comparison-row">
+                    <div class="comparison-label">
+                      <span>{{ item.categoria}}</span>
+                      <strong> {{ item.quantidade}}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill category"
+                    [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
+                  </div>
+                </div>
           }
-        </ul>
+        
       </div>
 
       <!-- Estante por Gênero do Autor -->
-      <div class="metric-card metric-card-total">
-        <span class="metric-label">Estante por Gênero do Autor</span>
-        <ul class="ranking-list">
+      <div class="metric-card metric-card-goal">
+        <div class="chart-header">
+          <h2>Estante por gênero do autor</h2>
+          <span>GERAL</span>
+        </div>
+        
           @for (item of dashboard.estantePorGeneroAutor; track item.categoria) {
-            <li>
-              <span class="metric-label">{{ item.categoria }}: {{ item.quantidade }}</span>
-            </li>
+            <div class="comparison-chart">
+              <div class="comparison-row">
+                <div class="comparison-label">
+                  <span>{{ item.categoria}}</span>
+                  <strong> {{ item.quantidade}}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="bar-track">
+              <div class="bar-fill category"
+                    [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
+              </div>
+            </div>
           }
-        </ul>
       </div>
     </section>
   } @else if (!erro) {

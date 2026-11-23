@@ -1,4 +1,5 @@
 export class ResumoLeituras{
+    totalLivrosEstante!: number;
     backlog!: number;
     lendo!: number;
     lidos!: number;

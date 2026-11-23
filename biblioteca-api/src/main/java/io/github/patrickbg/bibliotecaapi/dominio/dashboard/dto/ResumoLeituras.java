@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public record ResumoLeituras(
+        Integer totalLivrosEstante,
         Integer backlog,
         Integer lendo,
         Integer lidos,
