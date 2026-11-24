@@ -5,8 +5,18 @@ import { ListagemAutores } from './autores/listagem-autores/listagem-autores';
 import { CadastroLivro } from './livros/cadastro-livro/cadastro-livro';
 import { ListagemLivros } from './livros/listagem-livros/listagem-livros';
 import { DashboardPage } from './dashboard/dashboard-page/dashboard-page';
+import { Login } from './auth/login/login';
 
 export const routes: Routes = [
+    {
+        path: 'login',
+        component: Login
+    },
+    {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full'
+    },
     {
         path: 'paginas',
         component: Template,
