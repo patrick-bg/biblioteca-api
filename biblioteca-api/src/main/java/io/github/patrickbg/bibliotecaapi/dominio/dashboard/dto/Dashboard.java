@@ -14,8 +14,13 @@ public record Dashboard(
         @JsonFormat(shape = JsonFormat.Shape.NUMBER)
         Year ano,
         ResumoLeituras resumo,
+        List<LivroResumoCard> leiturasAtuais,
+        List<LivroResumoCard> leiturasFinalizadasNoAno,
+        List<LivroResumoCard> livrosNotaCinco,
+        List<LivroResumoCard> livrosBacklog,
         List<LidosGeneroResumo> lidosPorGeneroNoAno,
         List<AutorRankingResumo> autoresMaisLidosNoAno,
+        List<AutorRankingResumo> autoresNaEstante,
         List<ContagemResumo<GeneroLivro>> estantePorGenero,
         List<ContagemResumo<GeneroAutor>> estantePorGeneroAutor,
         List<ContagemResumo<FormatoLivro>> estantePorFormato,

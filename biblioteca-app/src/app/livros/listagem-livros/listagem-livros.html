@@ -119,14 +119,14 @@
                                 <td>{{ livro.titulo }}</td>
                                 <td>{{ livro.isbn }}</td>
                                 <td>{{ livro.autorNome }}</td>
-                                <td>{{ livro.genero }}</td>
+                                <td>{{ livro.genero | enumLabel }}</td>
                                 <td>{{ livro.preco | currency: 'BRL'}}</td>
-                                <td>{{ livro.idioma }}</td>
-                                <td>{{ livro.formato }}</td>
+                                <td>{{ livro.idioma | enumLabel }}</td>
+                                <td>{{ livro.formato | enumLabel }}</td>
                                 <td>{{ livro.editora }}</td>
                                 <td> {{ livro.dataPublicacao | date: 'dd/MM/yyyy' }}</td>
                                 <td>{{ livro.paginasTotais }}</td>
-                                <td>{{ livro.status }}</td>
+                                <td>{{ livro.status | enumLabel }}</td>
                                 <td>{{ livro.nota }}</td>
 
                                  <td class="text-center">

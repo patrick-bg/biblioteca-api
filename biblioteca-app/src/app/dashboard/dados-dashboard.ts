@@ -10,6 +10,16 @@ export class ResumoLeituras{
     valorTotalInvestido!: number;
 }
 
+export class LivroResumoCard {
+    id!: string;
+    titulo!: string;
+    urlCapa!: string | null;
+    nota!: number | null;
+    paginasLidas!: number;
+    paginasTotais!: number;
+}
+
+
 export class AutorRankingResumo{
     autorId!: string;
     nome!: string;
@@ -29,8 +39,13 @@ export class LidosGeneroResumo{
 export class Dashboard{
     ano!: number;
     resumo!: ResumoLeituras;
+    leiturasAtuais!: LivroResumoCard[];
+    leiturasFinalizadasNoAno!: LivroResumoCard[];
+    livrosNotaCinco!: LivroResumoCard[];
+    livrosBacklog!: LivroResumoCard[];
     lidosPorGeneroNoAno!: LidosGeneroResumo[];
     autoresMaisLidosNoAno!: AutorRankingResumo[];
+    autoresNaEstante!: AutorRankingResumo[];
     estantePorGenero!: ContagemResumo<string>[];
     estantePorGeneroAutor!: ContagemResumo<string>[];
     estantePorFormato!: ContagemResumo<string>[];

@@ -5,16 +5,19 @@ import { Dashboard } from '../dados-dashboard';
 import { Header } from '../../common/components/header/header';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { EnumLabelPipe } from '../../common/components/enum-label.pipe';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [Header, CommonModule, FormsModule],
+  standalone: true,
+  imports: [Header, CommonModule, FormsModule, EnumLabelPipe],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.scss',
 })
 export class DashboardPage implements OnInit{
   service = inject(DashboardService);
-  
+  router = inject(Router)
   anoSelecionado: number = new Date().getFullYear();
   anosDisponiveis: number[] = [];
   erro: string | null = null;
@@ -57,6 +60,26 @@ export class DashboardPage implements OnInit{
 
     const resultado = (valor / total) * 100;
     return Math.round(resultado);
+  }
+
+  prepararEdicao(idLivro: string){
+    
+    if(!idLivro) return;
+    this.router.navigate(['/paginas/cadastro-livros'], {
+      queryParams: {
+        id: idLivro
+      }
+    });
+  }
+
+  calcularPercentualBarra(quantidade: number, lista: { livrosLidos?: number; quantidade?: number }[]): number {
+    if (!lista || lista.length === 0) return 0;
+
+    // Pega o maior valor (que é o primeiro item da lista ordenada)
+    const maximo = lista[0].livrosLidos ?? lista[0].quantidade ?? 1;
+    if (maximo === 0) return 0;
+
+    return Math.round((quantidade / maximo) * 100);
   }
   
 }

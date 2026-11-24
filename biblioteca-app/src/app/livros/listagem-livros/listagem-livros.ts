@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { PageResult } from '../../common/pagination/page-result';
 import { DetalhesAutor } from '../../autores/dados-autor';
+import { EnumLabelPipe } from '../../common/components/enum-label.pipe';
 
 interface FiltrosForm {
   ano: FormControl<string>;
@@ -27,7 +28,7 @@ interface FiltrosForm {
 
 @Component({
   selector: 'app-listagem-livros',
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, Header, RouterModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, Header, RouterModule, EnumLabelPipe],
   templateUrl: './listagem-livros.html',
   styleUrl: './listagem-livros.scss',
 })

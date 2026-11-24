@@ -7,10 +7,11 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Header } from '../../common/components/header/header';
+import { EnumLabelPipe } from '../../common/components/enum-label.pipe';
 
 @Component({
   selector: 'app-listagem-autores',
-  imports: [ Header, CommonModule, RouterLink, RouterModule],
+  imports: [ Header, CommonModule, RouterLink, RouterModule, EnumLabelPipe],
   templateUrl: './listagem-autores.html',
   styleUrl: './listagem-autores.scss',
 })

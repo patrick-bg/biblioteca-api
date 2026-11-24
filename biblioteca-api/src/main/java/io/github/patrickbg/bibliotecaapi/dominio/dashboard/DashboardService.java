@@ -72,18 +72,27 @@ public class DashboardService {
         var autoresMaisLidosNoAno = livroRepository.buscarRankingAutoresNoPeriodo(
                 StatusLivro.LIDO,inicioAno,fimAno, PageRequest.of(0, 5)
         );
-
+        var autoresNaEstante = livroRepository.buscarRankingAutoresEstante(PageRequest.of(0, 5));
         var estantePorGenero = livroRepository.contarEstantePorGenero();
         var estantePorGeneroAutor = livroRepository.contarEstantePorGeneroAutor();
         var estantePorFormato = livroRepository.contarEstantePorFormato();
         var estantePorIdioma = livroRepository.contarEstantePorIdioma();
         var estantePorPaisAutor = livroRepository.contarEstantePorPaisAutor();
+        var leiturasAtuais = livroRepository.buscarLeiturasAtuais();
+        var leiturasFinalizadasNoAno = livroRepository.buscarLivrosLidosNoPeriodo(inicioAno, fimAno);
+        var livrosNotaCinco = livroRepository.buscarLivrosNotaCinco();
+        var livrosBacklog = livroRepository.buscarLivrosBacklog();
 
         return new Dashboard(
                 anoDashboardAtual,
                 resumoLeituras,
+                leiturasAtuais,
+                leiturasFinalizadasNoAno,
+                livrosNotaCinco,
+                livrosBacklog,
                 lidosPorGeneroNoAno,
                 autoresMaisLidosNoAno,
+                autoresNaEstante,
                 estantePorGenero,
                 estantePorGeneroAutor,
                 estantePorFormato,

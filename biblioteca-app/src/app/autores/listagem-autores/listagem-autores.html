@@ -19,7 +19,7 @@
                             <th>Genero</th>
                             <th>Idade</th>
                             <th>País</th>
-                            <th >Ações</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
 
@@ -28,7 +28,7 @@
                         @for (autor of listagem.content; track autor.id) {
                             <tr >
                                 <td> {{ autor.nome }}</td>
-                                <td> {{ autor.generoAutor }}</td>
+                                <td> {{ autor.generoAutor | enumLabel }}</td>
                                 <td> {{ calcularIdade(autor.dataNascimento, autor.dataFalecimento) }} anos
                                 @if(autor.dataFalecimento){
                                     <span class="fa-solid fa-cross" 
@@ -36,7 +36,7 @@
                                     </span>
                                 }
                                 </td>
-                                <td> {{ autor.paisOrigem }}</td>
+                                <td> {{ autor.paisOrigem | enumLabel }}</td>
                                 
                                 <td class="text-center">
                                     <button class="icon-btn" title="Editar"

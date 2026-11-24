@@ -65,12 +65,166 @@
       </div>
 
     </section>
-    
 
-    <!-- 2. Grid de Detalhes Anuais e Estante -->
+    <!-- 2. Vitrine de Livros: Leituras atuais e finalizadas no ano -->
+     <section class="charts-grid books-section">
+
+      <!-- Card: Leituras atuais -->
+       <div class="chart-panel metric-card-reading">
+        <div class="chart-header">
+          <div>
+            <h2>Leituras Atuais</h2>
+            <span>{{ dashboard.leiturasAtuais.length }} em andamento</span>
+          </div>
+        </div>
+        @if (dashboard.leiturasAtuais.length === 0) {
+          <div class="empty-state">
+            <p>Nenhum livro sendo lido no momento</p>
+          </div>
+        } @else {
+          <div class="books-shelf">
+            @for (livro of dashboard.leiturasAtuais; track livro.id) {
+              <div class="book-card" (click)="prepararEdicao(livro.id)">
+                <div class="book-cover-wrapper">
+                  <img 
+                    [src]="livro.urlCapa || 'assets/capa-padrao.png'" 
+                    [alt]="livro.titulo"
+                    class="book-cover">
+                  <span class="book-badge reading">Lendo</span>
+                </div>
+                <div class="book-details">
+                  <strong class="book-title" [title]="livro.titulo">
+                    {{ livro.titulo }}
+                  </strong>
+                  <small class="book-meta">
+                    {{ livro.paginasLidas }} / {{ livro.paginasTotais }} págs.
+                  </small>
+                </div>
+              </div>
+            }
+          </div>
+        }
+       </div>
+
+       <!-- Card: Finalizados no ano selecionado -->
+       <div class="chart-panel metric-card-reading">
+        <div class="chart-header">
+          <div>
+            <h2>Finalizados em {{ dashboard.ano }}</h2>
+            <span> {{ dashboard.leiturasFinalizadasNoAno.length }} livro(s) concluído(s)</span>
+          </div>
+        </div>
+        @if ( dashboard.leiturasFinalizadasNoAno.length === 0) {
+          <div class="empty-state">
+            <p>Nenhum livro finalizado em {{ dashboard.ano }}</p>
+          </div>
+        } @else {
+          <div class="books-shelf">
+            @for (livro of dashboard.leiturasFinalizadasNoAno; track livro.id) {
+              <div class="book-card"  (click)="prepararEdicao(livro.id)" >
+                <div class="book-cover-wrapper">
+                  <img 
+                    [src]="livro.urlCapa || 'assets/capa-padrao.png'" 
+                    [alt]="livro.titulo"
+                    class="book-cover">
+                  @if (livro.nota) {
+                    <span class="book-badge rating">★ {{ livro.nota | number:'1.1-1' }}</span>
+                  }
+                </div>
+                <div class="book-details">
+                  <strong class="book-title" [title]="livro.titulo">
+                    {{ livro.titulo }}
+                  </strong>
+                  <small class="book-meta">
+                    {{ livro.nota ? 'Nota: ' + (livro.nota | number: '1.1-1') +  ' / 5' : 'Sem avaliação' }}
+                  </small>
+                </div>
+              </div>
+            }
+          </div>
+        }
+       </div>
+     </section>
+
+     <!-- 2. Vitrine de Livros: Leituras atuais e finalizadas no ano -->
+
+     <section class="charts-grid books-section">
+      <!-- Card: Livros Nota 5 (Favoritos)-->
+       <div class="chart-panel metric-card-reading">
+        <div class="chart-header">
+          <div>
+            <h2>Favoritos (Nota 5)</h2>
+            <span> {{ dashboard.livrosNotaCinco.length }} livro(s) avaliados(s) com nota máxima</span>
+          </div>
+        </div>
+        @if ( dashboard.livrosNotaCinco.length === 0) {
+          <div class="empty-state">
+            <p>Nenhum livro com nota 5.</p>
+          </div>
+        } @else {
+          <div class="books-shelf books-shelf-horizontal">
+            @for (livro of dashboard.livrosNotaCinco; track livro.id) {
+              <div class="book-card"  (click)="prepararEdicao(livro.id)" >
+                <div class="book-cover-wrapper">
+                  <img 
+                    [src]="livro.urlCapa || 'assets/capa-padrao.png'" 
+                    [alt]="livro.titulo"
+                    class="book-cover">
+                  <span class="book-badge rating">★ 5.0</span>
+                </div>
+                <div class="book-details">
+                  <strong class="book-title" [title]="livro.titulo">
+                    {{ livro.titulo }}
+                  </strong>
+                  <small class="book-meta">
+                    {{ livro.paginasTotais }} págs.
+                  </small>
+                </div>
+              </div>
+            }
+          </div>
+        }
+       </div>
+
+       <!-- Card: Livros em Backlog -->
+      <div class="chart-panel metric-card-reading">
+        <div class="chart-header">
+          <div>
+            <h2>Na Fila (Backlog)</h2>
+            <span>{{ dashboard.livrosBacklog.length }} livro(s) aguardando leitura</span>
+          </div>
+        </div>
+
+        @if (dashboard.livrosBacklog.length === 0) {
+          <div class="empty-state">
+            <p>Sua fila de leitura está vazia.</p>
+          </div>
+        } @else {
+          <div class="books-shelf books-shelf-horizontal">
+            @for (livro of dashboard.livrosBacklog; track livro.id) {
+              <div class="book-card" (click)="prepararEdicao(livro.id)">
+                <div class="book-cover-wrapper">
+                  <img
+                    [src]="livro.urlCapa || 'assets/capa-padrao.png'"
+                    [alt]="livro.titulo"
+                    class="book-cover" />
+                  <span class="book-badge backlog">Na Fila</span>
+                </div>
+                <div class="book-details">
+                  <strong class="book-title" [title]="livro.titulo">{{ livro.titulo }}</strong>
+                  <small class="book-meta">{{ livro.paginasTotais }} págs.</small>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+     </section>
+
+    <!-- 3. Grid de Detalhes Anuais e Estante -->
     <section class="charts-grid">
       <!-- Autores mais lidos no ano -->
-      <div class="chart-panel metric-card-goal">
+      <div class="metric-card metric-card-reading">
         <div class="chart-header">
           <h2>Autores mais lidos </h2>
           <span>({{ dashboard.ano }})</span>
@@ -90,7 +244,7 @@
                 </div>
 
                 <div class="bar-track">
-                  <div class="bar-fill category"
+                  <div class="bar-fill completed"
                     [style.width.%]="percentual(autor.livrosLidos, dashboard.resumo.lidos)">
 
                   </div>
@@ -100,7 +254,7 @@
       </div>
 
       <!-- Gêneros mais lidos no ano -->
-      <div class="metric-card metric-card-goal">
+      <div class="metric-card metric-card-reading">
         <div class="chart-header">
           <h2>Lidos por gênero</h2>
           <span>({{ dashboard.ano }})</span>
@@ -112,13 +266,13 @@
               <div class="comparison-chart">
                   <div class="comparison-row">
                     <div class="comparison-label">
-                      <span>{{ item.genero}}</span>
+                      <span>{{ item.genero | enumLabel}}</span>
                       <strong> {{ item.lidos}}</strong>
                     </div>
                   </div>
                 </div>
                 <div class="bar-track">
-                  <div class="bar-fill category"
+                  <div class="bar-fill completed"
                     [style.width.%]="percentual(item.lidos, dashboard.resumo.lidos)">
                   </div>
                 </div>
@@ -128,7 +282,7 @@
       </div>
 
       <!-- Estante por Gênero -->
-      <div class="metric-card metric-card-goal">
+      <div class="metric-card metric-card-reading">
         <div class="chart-header">
           <h2>Estante por gênero</h2>
           <span>GERAL</span>
@@ -138,13 +292,13 @@
             <div class="comparison-chart">
                   <div class="comparison-row">
                     <div class="comparison-label">
-                      <span>{{ item.categoria}}</span>
+                      <span>{{ item.categoria | enumLabel}}</span>
                       <strong> {{ item.quantidade}}</strong>
                     </div>
                   </div>
                 </div>
                 <div class="bar-track">
-                  <div class="bar-fill category"
+                  <div class="bar-fill completed"
                     [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
                   </div>
                 </div>
@@ -153,7 +307,7 @@
       </div>
 
       <!-- Estante por Formato -->
-      <div class="metric-card metric-card-goal">
+      <div class="metric-card metric-card-reading">
         <div class="chart-header">
           <h2>Estante por formato</h2>
           <span>GERAL</span>
@@ -163,13 +317,13 @@
             <div class="comparison-chart">
                   <div class="comparison-row">
                     <div class="comparison-label">
-                      <span>{{ item.categoria}}</span>
+                      <span>{{ item.categoria | enumLabel}}</span>
                       <strong> {{ item.quantidade}}</strong>
                     </div>
                   </div>
                 </div>
                 <div class="bar-track">
-                  <div class="bar-fill category"
+                  <div class="bar-fill completed"
                     [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
                   </div>
                 </div>
@@ -178,7 +332,7 @@
       </div>
 
       <!-- Estante por Idioma -->
-      <div class="metric-card metric-card-goal">
+      <div class="metric-card metric-card-reading">
         <div class="chart-header">
           <h2>Estante por idioma</h2>
           <span>GERAL</span>
@@ -188,13 +342,13 @@
             <div class="comparison-chart">
                   <div class="comparison-row">
                     <div class="comparison-label">
-                      <span>{{ item.categoria}}</span>
+                      <span>{{ item.categoria | enumLabel}}</span>
                       <strong> {{ item.quantidade}}</strong>
                     </div>
                   </div>
                 </div>
                 <div class="bar-track">
-                  <div class="bar-fill category"
+                  <div class="bar-fill completed"
                     [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
                   </div>
                 </div>
@@ -203,7 +357,7 @@
       </div>
 
       <!-- Estante por País do Autor -->
-      <div class="metric-card metric-card-goal">
+      <div class="metric-card metric-card-reading">
         <div class="chart-header">
           <h2>Estante por país do autor</h2>
           <span>GERAL</span>
@@ -213,13 +367,13 @@
             <div class="comparison-chart">
                   <div class="comparison-row">
                     <div class="comparison-label">
-                      <span>{{ item.categoria}}</span>
+                      <span>{{ item.categoria | enumLabel}}</span>
                       <strong> {{ item.quantidade}}</strong>
                     </div>
                   </div>
                 </div>
                 <div class="bar-track">
-                  <div class="bar-fill category"
+                  <div class="bar-fill completed"
                     [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
                   </div>
                 </div>
@@ -228,7 +382,7 @@
       </div>
 
       <!-- Estante por Gênero do Autor -->
-      <div class="metric-card metric-card-goal">
+      <div class="metric-card metric-card-reading">
         <div class="chart-header">
           <h2>Estante por gênero do autor</h2>
           <span>GERAL</span>
@@ -238,15 +392,40 @@
             <div class="comparison-chart">
               <div class="comparison-row">
                 <div class="comparison-label">
-                  <span>{{ item.categoria}}</span>
+                  <span>{{ item.categoria | enumLabel}}</span>
                   <strong> {{ item.quantidade}}</strong>
                 </div>
               </div>
             </div>
 
             <div class="bar-track">
-              <div class="bar-fill category"
+              <div class="bar-fill completed"
                     [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
+              </div>
+            </div>
+          }
+      </div>
+
+      <!-- Ranking autores na estante -->
+      <div class="metric-card metric-card-reading">
+        <div class="chart-header">
+          <h2>Ranking de autores na estante</h2>
+          <span>GERAL</span>
+        </div>
+        
+          @for (autor of dashboard.autoresNaEstante; track autor.autorId) {
+            <div class="comparison-chart">
+              <div class="comparison-row">
+                <div class="comparison-label">
+                  <span>{{ autor.nome }}</span>
+                  <strong> {{ autor.livrosLidos}}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="bar-track">
+              <div class="bar-fill completed"
+                    [style.width.%]="calcularPercentualBarra(autor.livrosLidos, (dashboard.autoresNaEstante))">
               </div>
             </div>
           }

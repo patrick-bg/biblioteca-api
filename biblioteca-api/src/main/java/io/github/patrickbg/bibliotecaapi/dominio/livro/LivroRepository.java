@@ -5,6 +5,7 @@ import io.github.patrickbg.bibliotecaapi.dominio.autor.model.PaisOrigemAutor;
 import io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.AutorRankingResumo;
 import io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.ContagemResumo;
 import io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LidosGeneroResumo;
+import io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LivroResumoCard;
 import io.github.patrickbg.bibliotecaapi.dominio.livro.model.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -127,6 +128,17 @@ public interface LivroRepository
     // --- MÉTRICAS GERAIS DA ESTANTE INTEIRA ---
 
     @Query("""
+            SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.AutorRankingResumo(
+                l.autor.id, l.autor.nome, COUNT(l)
+            )
+            FROM LivroEntity l
+            WHERE l.status IN ('LIDO', 'LENDO', 'BACKLOG')
+            GROUP BY l.autor.id, l.autor.nome
+            ORDER BY COUNT(l) DESC
+            """)
+    List<AutorRankingResumo> buscarRankingAutoresEstante(Pageable pageable);
+
+    @Query("""
             SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.ContagemResumo(l.status, COUNT(l))
             FROM LivroEntity l
             GROUP BY l.status
@@ -223,6 +235,52 @@ public interface LivroRepository
 
     @Query("SELECT COALESCE(SUM(l.preco), 0) FROM LivroEntity l")
     BigDecimal somarValorTotalInvestido();
+
+    // --- DADOS DE LIVROS ---
+    @Query("""
+            SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LivroResumoCard(
+                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais
+            )
+            FROM LivroEntity l
+            WHERE l.status = 'LENDO'
+            ORDER BY l.dataAtualizacao DESC
+            """)
+    List<LivroResumoCard> buscarLeiturasAtuais();
+
+    @Query("""
+            SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LivroResumoCard(
+                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais
+            )
+            FROM LivroEntity l
+            WHERE l.status = 'LIDO'
+              AND l.lidoEm BETWEEN :inicio AND :fim
+            ORDER BY l.lidoEm DESC, l.dataAtualizacao DESC
+            """)
+    List<LivroResumoCard> buscarLivrosLidosNoPeriodo(
+            @Param("inicio") YearMonth inicio,
+            @Param("fim") YearMonth fim);
+
+    @Query("""
+            SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LivroResumoCard(
+                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais
+            )
+            FROM LivroEntity l
+            WHERE l.nota = 5.0
+            ORDER BY l.lidoEm DESC, l.titulo ASC
+            """)
+    List<LivroResumoCard> buscarLivrosNotaCinco();
+
+    @Query("""
+            SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LivroResumoCard(
+                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais
+            )
+            FROM LivroEntity l
+            WHERE l.status = 'BACKLOG'
+            ORDER BY l.dataAtualizacao DESC
+            """)
+    List<LivroResumoCard> buscarLivrosBacklog();
+
+
 }
 
 
