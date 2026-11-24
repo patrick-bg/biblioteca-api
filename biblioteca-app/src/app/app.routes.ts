@@ -6,6 +6,7 @@ import { CadastroLivro } from './livros/cadastro-livro/cadastro-livro';
 import { ListagemLivros } from './livros/listagem-livros/listagem-livros';
 import { DashboardPage } from './dashboard/dashboard-page/dashboard-page';
 import { Login } from './auth/login/login';
+import { authGuard } from './auth/auth-guard';
 
 export const routes: Routes = [
     {
@@ -20,6 +21,7 @@ export const routes: Routes = [
     {
         path: 'paginas',
         component: Template,
+        canActivate:[authGuard],
         children: [
             {
                 path: '',
