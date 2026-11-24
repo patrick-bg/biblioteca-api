@@ -2,6 +2,7 @@ package io.github.patrickbg.bibliotecaapi.infra.handlers;
 
 import io.github.patrickbg.bibliotecaapi.common.exceptions.OperacaoNaoPermitidaException;
 import io.github.patrickbg.bibliotecaapi.common.exceptions.RegistroNaoEncontradoException;
+import io.github.patrickbg.bibliotecaapi.common.exceptions.UnauthorizedException;
 import io.github.patrickbg.bibliotecaapi.common.exceptions.ValidationException;
 import io.github.patrickbg.bibliotecaapi.common.validation.CampoInvalido;
 import io.github.patrickbg.bibliotecaapi.dominio.autor.dto.AutorForm;
@@ -81,6 +82,16 @@ public class GlobalExceptionHandler {
                 "error", e.getMessage(),
                 "message", e.getMessage())
         );
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<?> handleUnauthorizedException(UnauthorizedException e){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+           "timestamp", LocalDateTime.now(),
+           "status", HttpStatus.UNAUTHORIZED,
+           "error", e.getMessage(),
+           "message", e.getMessage()
+        ));
     }
 
 }
