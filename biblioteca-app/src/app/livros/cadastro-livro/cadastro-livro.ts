@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors, FormBuilder } from '@angular/forms';
-import { DadosLivroForm, DetalhesLivros, StatusLivro } from '../dados-livros';
+import { DadosLivroForm, DetalhesLivros, LivroBuscaExterna, StatusLivro } from '../dados-livros';
 import { ToastrService } from 'ngx-toastr';
 import { LivroService } from '../livro-service';
 import { DetalhesAutor } from '../../autores/dados-autor';
@@ -48,6 +48,8 @@ export class CadastroLivro implements OnInit {
   mesAtualMax: string;
   campoPesquisa = new FormControl('');
   resultados: any[] = [];
+  resultadosBuscaExterna: LivroBuscaExterna[] = [];
+  buscandoExterno = false;
   
 
   constructor(private fb: FormBuilder){
@@ -241,6 +243,69 @@ export class CadastroLivro implements OnInit {
     }
 
     return precoMascarado.replace(/\./g, '').replace(',','.');
+  }
+
+   buscarDadosPorIsbn(): void {
+    const isbn = this.form.controls.isbn.value;
+    if (!isbn) {
+      this.toast.warning('Informe o ISBN antes de buscar.');
+      return;
+    }
+
+    this.service.buscarPorIsbnExterno(isbn).subscribe({
+      next: (dados) => {
+        this.form.patchValue({
+          titulo: dados.titulo || this.form.controls.titulo.value,
+          isbn: dados.isbn || isbn,
+          editora: dados.editora || this.form.controls.editora.value,
+          paginasTotais: dados.paginasTotais || this.form.controls.paginasTotais.value,
+          urlCapa: dados.urlCapa || this.form.controls.urlCapa.value
+        });
+        this.toast.success('Dados do livro preenchidos com sucesso!');
+      },
+      error: () => {
+        this.toast.info('Livro não encontrado na base externa. Preencha manualmente.');
+      }
+    });
+  }
+
+  pesquisarEdicoesPorTitulo(): void {
+    const titulo = this.form.controls.titulo.value?.trim();
+    if (!titulo || titulo.length < 3) {
+      this.toast.warning('Digite pelo menos 3 letras do título para buscar.');
+      return;
+    }
+
+    this.buscandoExterno = true;
+    this.resultadosBuscaExterna = [];
+
+    this.service.buscarPorTituloExterno(titulo).subscribe({
+      next: (lista) => {
+        this.resultadosBuscaExterna = lista;
+        this.buscandoExterno = false;
+        if (lista.length === 0) {
+          this.toast.info('Nenhuma edição encontrada para este título.');
+        }
+      },
+      error: () => {
+        this.buscandoExterno = false;
+        this.toast.error('Erro ao consultar o catálogo externo.');
+      }
+    });
+  }
+
+  selecionarEdicao(edicao: LivroBuscaExterna): void {
+    this.form.patchValue({
+      titulo: edicao.titulo || this.form.controls.titulo.value,
+      isbn: edicao.isbn || this.form.controls.isbn.value,
+      editora: edicao.editora || this.form.controls.editora.value,
+      paginasTotais: edicao.paginasTotais || this.form.controls.paginasTotais.value,
+      urlCapa: edicao.urlCapa || this.form.controls.urlCapa.value
+    });
+
+    // Fecha a lista de resultados após escolher
+    this.resultadosBuscaExterna = [];
+    this.toast.success('Dados da edição selecionada foram preenchidos!');
   }
 
 }

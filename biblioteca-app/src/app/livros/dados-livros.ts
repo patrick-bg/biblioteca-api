@@ -56,3 +56,12 @@ export class FiltroLivro{
     page?: number;
     size?: number;
 }
+
+export class LivroBuscaExterna{
+    titulo?: string;
+    isbn?: string;
+    editora?: string;
+    paginasTotais?: number;
+    urlCapa?: string;
+    autorNome?: string;
+}

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { DadosLivroForm, DetalhesLivros, FiltroLivro } from './dados-livros';
+import { DadosLivroForm, DetalhesLivros, FiltroLivro, LivroBuscaExterna } from './dados-livros';
 import { Observable, Observer } from 'rxjs';
 import { DetalhesAutor } from '../autores/dados-autor';
 import { PageResult } from '../common/pagination/page-result';
@@ -83,4 +83,14 @@ export class LivroService {
 
     return this.http.get<PageResult<DetalhesLivros>>(this.baseUrl, {params});
   }
+
+  buscarPorIsbnExterno(isbn : string): Observable<LivroBuscaExterna>{
+    return this.http.get<LivroBuscaExterna>(`${this.baseUrl}/buscar`, {params:{isbn}});
+  }
+
+  buscarPorTituloExterno(titulo: string): Observable<LivroBuscaExterna[]> {
+  return this.http.get<LivroBuscaExterna[]>(`${this.baseUrl}/buscar/titulo`, {
+    params: { titulo }
+  });
+}
 }

@@ -7,8 +7,10 @@ import java.util.List;
 
 public record LivroBuscaDTO(
         String titulo,
-        List<String> autores,
         String isbn,
-        String capaUrl
+        String editora,
+        Integer paginasTotais,
+        String urlCapa,
+        String autorNome
 ) {}
 

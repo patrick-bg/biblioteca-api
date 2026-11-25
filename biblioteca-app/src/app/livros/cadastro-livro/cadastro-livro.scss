@@ -90,3 +90,122 @@
 .campo-busca input:focus {
   border-color: var(--roxo-primario);
 }
+
+/* Alinha o input e o botão lado a lado dentro do .form-group */
+.input-with-button {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.input-with-button input {
+    flex: 1; /* Faz o input ocupar todo o espaço restante */
+}
+
+.btn-search-external {
+    padding: 0 16px;
+    background-color: var(--turquesa);
+    color: var(--branco);
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+}
+
+.btn-search-external:hover:not(:disabled) {
+    background-color: var(--turquesa-escuro);
+}
+
+.btn-search-external:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Caixa de resultados da busca por título */
+.resultados-externos-box {
+    border: 1px solid #dce1e6;
+    border-radius: 8px;
+    background: var(--branco);
+    margin-top: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.resultados-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-bottom: 1px solid #edf1f4;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+}
+
+.btn-close-results {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-close-results:hover {
+    color: #e74c3c;
+}
+
+.resultados-lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.resultado-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #edf1f4;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.resultado-item:last-child {
+    border-bottom: none;
+}
+
+.resultado-item:hover {
+    background-color: #f0fdfa;
+}
+
+.resultado-item img {
+    width: 38px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #eee;
+    flex-shrink: 0;
+}
+
+.resultado-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.resultado-info strong {
+    font-size: 13px;
+    color: #333;
+}
+
+.resultado-info small {
+    color: #666;
+    font-size: 12px;
+}

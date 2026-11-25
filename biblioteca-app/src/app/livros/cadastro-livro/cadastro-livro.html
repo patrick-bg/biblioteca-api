@@ -9,35 +9,75 @@
 
             <div class="form-group">
                 <label for="titulo">Título do Livro: *</label>
-                <input formControlName="titulo" type="text" id="titulo" name="titulo" placeholder="Ex: Don Casmurro">
+
+                <div>
+                    <input formControlName="titulo" type="text" id="titulo" name="titulo"
+                        placeholder="Ex: Don Casmurro">
+                    <button type="button" class="btn-search-external" (click)="pesquisarEdicoesPorTitulo()"
+                        [disabled]="buscandoExterno">
+                        {{ buscandoExterno ? 'Buscando...' : 'Buscar edições'}}
+                    </button>
+                </div>
+
+                @if (resultadosBuscaExterna.length > 0) {
+                    <div class="resultados-externos-box">
+                        <div class="resultados-header">
+                            <span>Selecione a edição desejada ({{ resultadosBuscaExterna.length }} encontradas):</span>
+                            <button type="button" class="btn-close-results" (click)="resultadosBuscaExterna = []">✕</button>
+                        </div>
+
+                        <ul class="resultados-lista">
+                            @for (item of resultadosBuscaExterna; track $index) {
+                                <li class="resultado-item" (click)="selecionarEdicao(item)">
+                                    <img [src]="item.urlCapa || 'assets/capa-padrao.png'" alt="Capa" />
+                                    <div class="resultado-info">
+                                        <strong>{{ item.titulo }}</strong>
+                                        <small>{{ item.autorNome || 'Autor não inf.' }} • {{ item.editora || 'Editora não inf.' }}</small>
+                                        <small>ISBN: {{ item.isbn || 'N/A' }} • {{ item.paginasTotais }} págs.</small>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
 
                 @if (form.controls.titulo.hasError('required') && form.controls.titulo.touched) {
-                    <span class="form-hint form-hint-error">
-                        Informe o título do livro.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Informe o título do livro.
+                </span>
                 }
 
                 @if (form.controls.titulo.hasError('apiError') && form.controls.titulo.touched) {
-                    <span class="form-hint form-hint-error">
-                        {{ form.get('titulo')?.errors?.['apiError']}}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{ form.get('titulo')?.errors?.['apiError']}}
+                </span>
                 }
             </div>
 
             <div class="form-group">
                 <label for="isbn">ISBN do Livro: *</label>
-                <input formControlName="isbn" type="text" id="isbn" name="isbn" placeholder="Ex: 978-8576573135">
+
+                <div class="input-with-button">
+                    <input formControlName="isbn" type="text" id="isbn" name="isbn" placeholder="Ex: 978-8576573135">
+                    <button 
+                        type="button" 
+                        class="btn-search-external" 
+                        (click)="buscarDadosPorIsbn()" 
+                        [disabled]="buscandoExterno">
+                        Buscar ISBN
+                    </button>
+                </div>
 
                 @if (form.controls.isbn.hasError('required') && form.controls.isbn.touched) {
-                    <span class="form-hint form-hint-error">
-                        Informe o isbn do livro.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Informe o isbn do livro.
+                </span>
                 }
 
                 @if (form.controls.isbn.hasError('apiError') && form.controls.isbn.touched) {
-                    <span class="form-hint form-hint-error">
-                        {{ form.get('isbn')?.errors?.['apiError']}}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{ form.get('isbn')?.errors?.['apiError']}}
+                </span>
                 }
             </div>
 
@@ -60,39 +100,34 @@
                 </select>
 
                 @if (form.controls.genero.hasError('required') && form.controls.genero.touched) {
-                    <span class="form-hint form-hint-error">
-                        Selecione o gênero do livro.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Selecione o gênero do livro.
+                </span>
                 }
 
                 @if (form.controls.genero.hasError('apiError') && form.controls.genero.touched) {
-                    <span class="form-hint form-hint-error">
-                        {{ form.get('genero')?.errors?.['apiError']}}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{ form.get('genero')?.errors?.['apiError']}}
+                </span>
                 }
             </div>
 
             <div class="form-group">
                 <label for="preco">Preço do livro: *</label>
-                <input id="preco" 
-                        nome="preco" 
-                        formControlName="preco" 
-                        type="text"
-                        mask="separator.2"
-                        thousandSeparator="."
-                        decimalMarker=",">
+                <input id="preco" nome="preco" formControlName="preco" type="text" mask="separator.2"
+                    thousandSeparator="." decimalMarker=",">
                 @if(form.controls.preco.hasError('required') && form.controls.preco.touched){
-                    <span class="form-hint form-hint-error">Informe o preço do livro.</span>
+                <span class="form-hint form-hint-error">Informe o preço do livro.</span>
                 }
 
                 @if(form.controls.preco.hasError('min') && form.controls.preco.touched){
-                    <span class="form-hint form-hint-error">O preço deve ser maior que zero.</span>
+                <span class="form-hint form-hint-error">O preço deve ser maior que zero.</span>
                 }
 
                 @if(form.controls.preco.hasError('apiError') && form.controls.preco.touched){
-                    <span class="form-hint form-hint-error">
-                        {{form.get('preco')?.errors?.['apiError'] }}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{form.get('preco')?.errors?.['apiError'] }}
+                </span>
                 }
             </div>
 
@@ -101,18 +136,18 @@
                 <select id="autorId" formControlName="autorId">
                     <option value="">Selecione...</option>
                     @for (autor of autoresDisponiveis; track autor.id) {
-                        <option [value]="autor.id">{{ autor.nome}}</option>
+                    <option [value]="autor.id">{{ autor.nome}}</option>
                     }
                 </select>
 
                 @if(form.controls.autorId.hasError('required') && form.controls.autorId.touched){
-                    <span class="form-hint form-hint-error">Selecione o autor(a) do livro.</span>
+                <span class="form-hint form-hint-error">Selecione o autor(a) do livro.</span>
                 }
 
                 @if(form.controls.autorId.hasError('apiError') && form.controls.autorId.touched){
-                    <span class="form-hint form-hint-error">
-                        {{form.get('autorId')?.errors?.['apiError'] }}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{form.get('autorId')?.errors?.['apiError'] }}
+                </span>
                 }
             </div>
 
@@ -122,20 +157,20 @@
                     <option value="">Selecione...</option>
                     <option value="PORTUGUES">Português</option>
                     <option value="INGLES">Inglês</option>
-                    
+
 
                 </select>
 
                 @if (form.controls.idioma.hasError('required') && form.controls.idioma.touched) {
-                    <span class="form-hint form-hint-error">
-                        Selecione o idioma do livro.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Selecione o idioma do livro.
+                </span>
                 }
 
                 @if (form.controls.idioma.hasError('apiError') && form.controls.idioma.touched) {
-                    <span class="form-hint form-hint-error">
-                        {{ form.get('idioma')?.errors?.['apiError']}}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{ form.get('idioma')?.errors?.['apiError']}}
+                </span>
                 }
             </div>
 
@@ -145,20 +180,20 @@
                     <option value="">Selecione...</option>
                     <option value="FISICO">Fisico</option>
                     <option value="EBOOK">Ebook</option>
-                    
+
 
                 </select>
 
                 @if (form.controls.formato.hasError('required') && form.controls.formato.touched) {
-                    <span class="form-hint form-hint-error">
-                        Selecione o formato do livro.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Selecione o formato do livro.
+                </span>
                 }
 
                 @if (form.controls.formato.hasError('apiError') && form.controls.formato.touched) {
-                    <span class="form-hint form-hint-error">
-                        {{ form.get('formato')?.errors?.['apiError']}}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{ form.get('formato')?.errors?.['apiError']}}
+                </span>
                 }
             </div>
 
@@ -167,15 +202,15 @@
                 <input formControlName="editora" type="text" id="editora" name="editora" placeholder="Ex: Suma">
 
                 @if (form.controls.editora.hasError('required') && form.controls.editora.touched) {
-                    <span class="form-hint form-hint-error">
-                        Informe a editora do livro.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Informe a editora do livro.
+                </span>
                 }
 
                 @if (form.controls.editora.hasError('apiError') && form.controls.editora.touched) {
-                    <span class="form-hint form-hint-error">
-                        {{ form.get('editora')?.errors?.['apiError']}}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{ form.get('editora')?.errors?.['apiError']}}
+                </span>
                 }
             </div>
 
@@ -184,39 +219,39 @@
                 <input id="dataPublicacao" nome="dataPublicacao" formControlName="dataPublicacao" type="date">
 
                 @if(form.controls.dataPublicacao.hasError('required') && form.controls.dataPublicacao.touched){
-                    <span class="form-hint form-hint-error">
-                        Informe a data de publicação do livro.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Informe a data de publicação do livro.
+                </span>
                 }
 
                 @if(form.controls.dataPublicacao.hasError('formatoInvalido')){
-                    <span class="form-hint form-hint-error">
-                        Formato inválido. Informe um ano com 4 dígitos
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Formato inválido. Informe um ano com 4 dígitos
+                </span>
                 }
 
                 @if(form.controls.dataPublicacao.hasError('dataInexistente')){
-                    <span class="form-hint form-hint-error">
-                        Data inválida. Informe uma data que exista no calendário.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Data inválida. Informe uma data que exista no calendário.
+                </span>
                 }
 
                 @if(form.controls.dataPublicacao.hasError('dataFutura')){
-                    <span class="form-hint form-hint-error">
-                        Data inválida. A data de publicação não pode ser no futuro.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Data inválida. A data de publicação não pode ser no futuro.
+                </span>
                 }
 
                 @if(form.controls.dataPublicacao.hasError('anoInvalido')){
-                    <span class="form-hint form-hint-error">
-                        Data inválida. O ano deve ser igual ou superior a 0001.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Data inválida. O ano deve ser igual ou superior a 0001.
+                </span>
                 }
 
                 @if(form.controls.dataPublicacao.hasError('apiError') && form.controls.dataPublicacao.touched){
-                    <span class="form-hint form-hint-error">
-                        {{form.get('dataPublicacao')?.errors?.['apiError'] }}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{form.get('dataPublicacao')?.errors?.['apiError'] }}
+                </span>
                 }
             </div>
 
@@ -225,22 +260,22 @@
                 <input formControlName="paginasTotais" type="number" id="paginasTotais" name="paginasTotais">
 
                 @if (form.controls.paginasTotais.hasError('required') && form.controls.paginasTotais.touched) {
-                    <span class="form-hint form-hint-error">
-                        Informe o total de páginas do livro.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Informe o total de páginas do livro.
+                </span>
                 }
 
                 @if (form.controls.paginasTotais.hasError('apiError') && form.controls.paginasTotais.touched) {
-                    <span class="form-hint form-hint-error">
-                        {{ form.get('paginasTotais')?.errors?.['apiError']}}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{ form.get('paginasTotais')?.errors?.['apiError']}}
+                </span>
                 }
 
                 @if (form.controls.paginasTotais.hasError('min') && form.controls.paginasTotais.touched) {
-                        <span class="form-hint form-hint-error">
-                            Um livro deve ter pelo menos uma página.
-                        </span>
-                    }
+                <span class="form-hint form-hint-error">
+                    Um livro deve ter pelo menos uma página.
+                </span>
+                }
             </div>
 
             <div class="form-group">
@@ -255,114 +290,103 @@
                 </select>
 
                 @if (form.controls.status.hasError('required') && form.controls.status.touched) {
-                    <span class="form-hint form-hint-error">
-                        Selecione o status da leitura.
-                    </span>
+                <span class="form-hint form-hint-error">
+                    Selecione o status da leitura.
+                </span>
                 }
 
                 @if (form.controls.status.hasError('apiError') && form.controls.status.touched) {
-                    <span class="form-hint form-hint-error">
-                        {{ form.get('status')?.errors?.['apiError']}}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{ form.get('status')?.errors?.['apiError']}}
+                </span>
                 }
             </div>
 
             @if (isLeituraIniciada()) {
-                <div class="form-group">
-                    <label for="paginasLidas">Paginas lidas até o momento: *</label>
-                    <input formControlName="paginasLidas" min="0" type="number" id="paginasLidas" name="paginasLidas" placeholder="Ex: Don Casmurro">
+            <div class="form-group">
+                <label for="paginasLidas">Paginas lidas até o momento: *</label>
+                <input formControlName="paginasLidas" min="0" type="number" id="paginasLidas" name="paginasLidas"
+                    placeholder="Ex: Don Casmurro">
 
-                    @if (form.controls.paginasLidas.hasError('required') && form.controls.paginasLidas.touched) {
-                        <span class="form-hint form-hint-error">
-                            Informe a quantidade de páginas lidas até o momento.
-                        </span>
-                    }
+                @if (form.controls.paginasLidas.hasError('required') && form.controls.paginasLidas.touched) {
+                <span class="form-hint form-hint-error">
+                    Informe a quantidade de páginas lidas até o momento.
+                </span>
+                }
 
-                    @if (form.controls.paginasLidas.hasError('min') && form.controls.paginasLidas.touched) {
-                        <span class="form-hint form-hint-error">
-                            Um livro iniciado deve ter pelo menos uma página lida.
-                        </span>
-                    }
+                @if (form.controls.paginasLidas.hasError('min') && form.controls.paginasLidas.touched) {
+                <span class="form-hint form-hint-error">
+                    Um livro iniciado deve ter pelo menos uma página lida.
+                </span>
+                }
 
-                    @if (form.controls.paginasLidas.hasError('apiError') && form.controls.paginasLidas.touched) {
-                        <span class="form-hint form-hint-error">
-                            {{ form.get('paginasLidas')?.errors?.['apiError']}}
-                        </span>
-                    }
+                @if (form.controls.paginasLidas.hasError('apiError') && form.controls.paginasLidas.touched) {
+                <span class="form-hint form-hint-error">
+                    {{ form.get('paginasLidas')?.errors?.['apiError']}}
+                </span>
+                }
 
-                    @if (form.hasError('paginasExcedidas') && form.controls.paginasLidas.touched) {
-                        <span class="form-hint form-hint-error">
-                            As páginas lidas não podem ser iguais ou maiores que o total de páginas.
-                        </span>
-                    }
-                </div>
+                @if (form.hasError('paginasExcedidas') && form.controls.paginasLidas.touched) {
+                <span class="form-hint form-hint-error">
+                    As páginas lidas não podem ser iguais ou maiores que o total de páginas.
+                </span>
+                }
+            </div>
             }
 
             @if (isLeituraFinalizada()) {
-                <div class="form-group">
-                    <label for="nota">Nota da leitura: *</label>
-                    <input 
-                        id="nota" 
-                        name="nota" 
-                        formControlName="nota" 
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        max="5"
-                    >
-                    @if(form.controls.nota.hasError('required') && form.controls.nota.touched){
-                        <span class="form-hint form-hint-error">Informe a nota da leitura.</span>
-                    }
+            <div class="form-group">
+                <label for="nota">Nota da leitura: *</label>
+                <input id="nota" name="nota" formControlName="nota" type="number" step="0.1" min="0" max="5">
+                @if(form.controls.nota.hasError('required') && form.controls.nota.touched){
+                <span class="form-hint form-hint-error">Informe a nota da leitura.</span>
+                }
 
-                    @if(form.controls.nota.hasError('min') && form.controls.nota.touched){
-                        <span class="form-hint form-hint-error">A nota deve ser maior que zero.</span>
-                    }
+                @if(form.controls.nota.hasError('min') && form.controls.nota.touched){
+                <span class="form-hint form-hint-error">A nota deve ser maior que zero.</span>
+                }
 
-                    @if(form.controls.nota.hasError('max') && form.controls.nota.touched){
-                        <span class="form-hint form-hint-error">A nota máxima é 5.0.</span>
-                    }
+                @if(form.controls.nota.hasError('max') && form.controls.nota.touched){
+                <span class="form-hint form-hint-error">A nota máxima é 5.0.</span>
+                }
 
-                    @if(form.controls.nota.hasError('pattern') && form.controls.nota.touched){
-                        <span class="form-hint form-hint-error">Nota somente até uma casa decimal (Ex: 4,5).</span>
-                    }
+                @if(form.controls.nota.hasError('pattern') && form.controls.nota.touched){
+                <span class="form-hint form-hint-error">Nota somente até uma casa decimal (Ex: 4,5).</span>
+                }
 
-                    @if(form.controls.nota.hasError('apiError') && form.controls.nota.touched){
-                        <span class="form-hint form-hint-error">
-                            {{form.get('nota')?.errors?.['apiError'] }}
-                        </span>
-                    }
-                </div>
+                @if(form.controls.nota.hasError('apiError') && form.controls.nota.touched){
+                <span class="form-hint form-hint-error">
+                    {{form.get('nota')?.errors?.['apiError'] }}
+                </span>
+                }
+            </div>
 
-                <div class="form-group">
+            <div class="form-group">
                 <label for="lidoEm">Leitura finalizada em: (Mês/Ano)</label>
-                <input 
-                    id="lidoEm" 
-                    nome="lidoEm" 
-                    formControlName="lidoEm" 
-                    type="month"
-                    [min]="mesMinimoPublicacao"
+                <input id="lidoEm" nome="lidoEm" formControlName="lidoEm" type="month" [min]="mesMinimoPublicacao"
                     [max]="mesAtualMax">
                 @if(form.controls.lidoEm.hasError('required') && form.controls.lidoEm.touched){
-                    <span class="form-hint form-hint-error">A data é obrigatória.</span>
+                <span class="form-hint form-hint-error">A data é obrigatória.</span>
                 }
 
                 @if(form.controls.lidoEm.hasError('apiError') && form.controls.lidoEm.touched){
-                    <span class="form-hint form-hint-error">
-                        {{form.get('lidoEm')?.errors?.['apiError'] }}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{form.get('lidoEm')?.errors?.['apiError'] }}
+                </span>
                 }
             </div>
             }
 
             <div class="form-group">
                 <label for="urlCapa">URL da capa do livro: </label>
-                <input formControlName="urlCapa" type="text" id="urlCapa" name="urlCapa" placeholder="https://capalivro.jpg">
+                <input formControlName="urlCapa" type="text" id="urlCapa" name="urlCapa"
+                    placeholder="https://capalivro.jpg">
 
-        
+
                 @if (form.controls.urlCapa.hasError('apiError') && form.controls.urlCapa.touched) {
-                    <span class="form-hint form-hint-error">
-                        {{ form.get('urlCapa')?.errors?.['apiError']}}
-                    </span>
+                <span class="form-hint form-hint-error">
+                    {{ form.get('urlCapa')?.errors?.['apiError']}}
+                </span>
                 }
             </div>
 
@@ -370,10 +394,7 @@
                 <button type="submit" class="btn-primary">
                     {{ idLivroEdicao ? 'Atualizar' : 'Salvar'}}
                 </button>
-                <button 
-                    type="button" 
-                    class="btn-secondary"
-                    [routerLink]="['/paginas/listagem-livros']">
+                <button type="button" class="btn-secondary" [routerLink]="['/paginas/listagem-livros']">
                     Cancelar
                 </button>
             </div>
