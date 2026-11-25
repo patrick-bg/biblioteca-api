@@ -11,5 +11,7 @@ public enum PaisOrigemAutor {
     GRECIA,
     HOLANDA,
     RUSSIA,
-    ALEMANHA
+    ALEMANHA,
+    CANADA,
+    POLONIA
 }

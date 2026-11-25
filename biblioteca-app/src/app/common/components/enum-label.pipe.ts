@@ -50,6 +50,8 @@ export class EnumLabelPipe implements PipeTransform {
     GRECIA: 'Grécia',
     HOLANDA: 'Holanda',
     RUSSIA: 'Rússia',
+    CANADA: "Canadá",
+    POLONIA: "Polônia",
 
     // Status
     LIDO: 'Lido',

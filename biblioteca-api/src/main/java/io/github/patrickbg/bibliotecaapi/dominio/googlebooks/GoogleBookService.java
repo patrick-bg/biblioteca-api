@@ -9,8 +9,6 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,44 +26,32 @@ public class GoogleBookService {
     public Optional<LivroBuscaDTO> buscarPorIsbn(String isbn) {
         String isbnLimpo = isbn.replaceAll("[^0-9X]", "");
 
-        try {
-            URI uri = UriComponentsBuilder.newInstance()
-                    .scheme("https")
-                    .host("www.googleapis.com")
-                    .path("/books/v1/volumes")
-                    .queryParam("q", "isbn:" + isbnLimpo)
-                    .build()
-                    .encode()
-                    .toUri();
-
-            Map<String, Object> response = restClient.get()
-                    .uri(uri)
-                    .retrieve()
-                    .body(new ParameterizedTypeReference<>() {});
-
-            if (response != null && response.containsKey("items")) {
-                List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
-                if (!items.isEmpty()) {
-                    return Optional.of(mapearVolumeGoogle((Map<String, Object>) items.get(0).get("volumeInfo")));
-                }
+        // 1. Se for ISBN brasileiro (começa com 97885 ou 97865), prioriza a BrasilAPI (CBL)
+        if (isbnLimpo.startsWith("97885") || isbnLimpo.startsWith("97865")) {
+            Optional<LivroBuscaDTO> resultadoBrasilApi = buscarBrasilApiPorIsbn(isbnLimpo);
+            if (resultadoBrasilApi.isPresent()) {
+                return resultadoBrasilApi;
             }
-        } catch (Exception ex) {
-            log.warn("Falha no Google Books por ISBN ({}): {}", isbnLimpo, ex.getMessage());
         }
 
+        // 2. Fallback para livros internacionais ou não encontrados na BrasilAPI: Open Library
         return buscarOpenLibraryPorIsbn(isbnLimpo);
     }
 
     public List<LivroBuscaDTO> buscarPorTitulo(String titulo) {
+        return buscarOpenLibraryPorTitulo(titulo.trim());
+    }
+
+    // --- CONSULTA BRASILAPI (CÂMARA BRASILEIRA DO LIVRO) ---
+
+    @SuppressWarnings("unchecked")
+    private Optional<LivroBuscaDTO> buscarBrasilApiPorIsbn(String isbn) {
         try {
             URI uri = UriComponentsBuilder.newInstance()
                     .scheme("https")
-                    .host("www.googleapis.com")
-                    .path("/books/v1/volumes")
-                    .queryParam("q", "intitle:" + titulo.trim())
-                    .queryParam("maxResults", 10)
+                    .host("brasilapi.com.br")
+                    .path("/api/isbn/v1/" + isbn)
                     .build()
-                    .encode()
                     .toUri();
 
             Map<String, Object> response = restClient.get()
@@ -73,20 +59,40 @@ public class GoogleBookService {
                     .retrieve()
                     .body(new ParameterizedTypeReference<>() {});
 
-            if (response != null && response.containsKey("items")) {
-                List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
-                if (!items.isEmpty()) {
-                    return items.stream()
-                            .map(item -> mapearVolumeGoogle((Map<String, Object>) item.get("volumeInfo")))
-                            .toList();
-                }
+            if (response == null || !response.containsKey("title")) {
+                return Optional.empty();
             }
-        } catch (Exception ex) {
-            log.warn("Falha no Google Books por título ('{}'): {}", titulo, ex.getMessage());
-        }
 
-        return buscarOpenLibraryPorTitulo(titulo.trim());
+            String titulo = (String) response.getOrDefault("title", "");
+            String editora = (String) response.getOrDefault("publisher", "");
+            Integer paginas = (response.get("page_count") instanceof Number n) ? n.intValue() : 0;
+            String urlCapa = (response.get("cover_url") instanceof String s) ? s : "";
+
+            List<String> autores = (List<String>) response.get("authors");
+            String autorNome = (autores != null && !autores.isEmpty()) ? autores.get(0) : "";
+
+            // Se a BrasilAPI não trouxer a capa, tenta buscar apenas a capa na Open Library
+            if (urlCapa.isBlank()) {
+                urlCapa = buscarOpenLibraryPorIsbn(isbn)
+                        .map(LivroBuscaDTO::urlCapa)
+                        .orElse("");
+            }
+
+            return Optional.of(new LivroBuscaDTO(
+                    titulo,
+                    isbn,
+                    editora,
+                    paginas,
+                    urlCapa,
+                    autorNome
+            ));
+        } catch (Exception ex) {
+            log.warn("Falha ao consultar BrasilAPI por ISBN ({}): {}", isbn, ex.getMessage());
+            return Optional.empty();
+        }
     }
+
+    // --- FALLBACK: OPEN LIBRARY API ---
 
     @SuppressWarnings("unchecked")
     private Optional<LivroBuscaDTO> buscarOpenLibraryPorIsbn(String isbn) {
@@ -136,7 +142,7 @@ public class GoogleBookService {
 
             return Optional.of(new LivroBuscaDTO(titulo, isbn, editora, paginas, urlCapa, autorNome));
         } catch (Exception ex) {
-            log.warn("Falha também na Open Library por ISBN ({}): {}", isbn, ex.getMessage());
+            log.warn("Falha na Open Library por ISBN ({}): {}", isbn, ex.getMessage());
             return Optional.empty();
         }
     }
@@ -191,44 +197,8 @@ public class GoogleBookService {
                 return new LivroBuscaDTO(titulo, isbn, editora, paginas, urlCapa, autorNome);
             }).toList();
         } catch (Exception ex) {
-            log.warn("Falha também na Open Library por título: {}", ex.getMessage());
+            log.warn("Falha na Open Library por título ('{}'): {}", tituloBusca, ex.getMessage());
             return List.of();
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private LivroBuscaDTO mapearVolumeGoogle(Map<String, Object> volumeInfo) {
-        if (volumeInfo == null) {
-            return new LivroBuscaDTO("", "", "", 0, "", "");
-        }
-
-        String titulo = (String) volumeInfo.getOrDefault("title", "");
-        String editora = (String) volumeInfo.getOrDefault("publisher", "");
-        Integer paginas = (Integer) volumeInfo.getOrDefault("pageCount", 0);
-
-        List<String> autores = (List<String>) volumeInfo.get("authors");
-        String autorNome = (autores != null && !autores.isEmpty()) ? autores.get(0) : "";
-
-        String isbn = "";
-        List<Map<String, String>> identifiers = (List<Map<String, String>>) volumeInfo.get("industryIdentifiers");
-        if (identifiers != null) {
-            isbn = identifiers.stream()
-                    .filter(id -> "ISBN_13".equals(id.get("type")))
-                    .map(id -> id.get("identifier"))
-                    .findFirst()
-                    .orElseGet(() -> identifiers.stream()
-                            .filter(id -> "ISBN_10".equals(id.get("type")))
-                            .map(id -> id.get("identifier"))
-                            .findFirst()
-                            .orElse(""));
-        }
-
-        String urlCapa = "";
-        Map<String, String> imageLinks = (Map<String, String>) volumeInfo.get("imageLinks");
-        if (imageLinks != null && imageLinks.containsKey("thumbnail")) {
-            urlCapa = imageLinks.get("thumbnail").replace("http://", "https://");
-        }
-
-        return new LivroBuscaDTO(titulo, isbn, editora, paginas, urlCapa, autorNome);
     }
 }
