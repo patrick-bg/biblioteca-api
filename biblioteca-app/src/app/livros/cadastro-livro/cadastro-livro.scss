@@ -8,13 +8,15 @@
   width: 100%;
   max-height: 300px;
   overflow-y: auto;
-  background: white;
-  border: 1px solid #ccc;
+  background-color: var(--bg-superficie);
+  color: var(--texto-principal);
+  border: 1px solid var(--borda-sutil);
+  border-radius: 6px;
   list-style: none;
   padding: 0;
   margin: 4px 0 0 0;
   z-index: 1000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 16px var(--sombra);
 }
 
 .item-resultado {
@@ -23,17 +25,27 @@
   gap: 12px;
   padding: 8px 12px;
   cursor: pointer;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--borda-sutil);
+  transition: background-color 0.2s;
+}
+
+.item-resultado:last-child {
+  border-bottom: none;
 }
 
 .item-resultado:hover {
-  background-color: #f5f5f5;
+  background-color: var(--bg-superficie-alt);
 }
 
 .info-livro {
   display: flex;
   flex-direction: column;
   font-size: 0.9rem;
+}
+
+.info-livro small,
+.info-livro span {
+  color: var(--texto-secundario);
 }
 
 .form-livro {
@@ -47,4 +59,34 @@
 .campo {
   display: flex;
   flex-direction: column;
+  gap: 5px;
+}
+
+/* Garante que inputs e selects dentro de .campo ou .campo-busca sigam o tema */
+.campo label,
+.campo-busca label {
+  font-weight: 500;
+  color: var(--texto-principal);
+}
+
+.campo input,
+.campo select,
+.campo textarea,
+.campo-busca input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--borda-sutil);
+  background-color: var(--bg-principal);
+  color: var(--texto-principal);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus,
+.campo-busca input:focus {
+  border-color: var(--roxo-primario);
 }

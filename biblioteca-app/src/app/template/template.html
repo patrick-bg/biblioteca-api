@@ -6,17 +6,24 @@
         </div>
 
         <nav class="sidebar-menu">
-            <a class="menu-item active" [routerLink]="['/paginas']">
+            <a class="menu-item" 
+                [routerLink]="['/paginas']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true}">
                 <i class="fa-solid fa-bars-progress"></i>
                 <span>Dashboard</span>
             </a>
 
-            <a class="menu-item" [routerLink]="['/paginas/listagem-autores']">
+            <a class="menu-item" 
+                [routerLink]="['/paginas/listagem-autores']"
+                routerLinkActive="active">
                 <i class="fa-solid fa-id-card"></i>
                 <span>Autores</span>
             </a>
 
-            <a class="menu-item" [routerLink]="['/paginas/listagem-livros']">
+            <a class="menu-item" 
+                [routerLink]="['/paginas/listagem-livros']"
+                routerLinkActive="active">
                 <i class="fa-solid fa-book"></i>
                 <span>Livros</span>
             </a>

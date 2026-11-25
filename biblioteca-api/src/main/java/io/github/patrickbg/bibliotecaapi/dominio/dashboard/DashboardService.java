@@ -39,7 +39,8 @@ public class DashboardService {
                 .stream().mapToInt(Integer::intValue).sum();
 
         int backlog = contagemPorStatus.getOrDefault(StatusLivro.BACKLOG, 0);
-        int lendo = contagemPorStatus.getOrDefault(StatusLivro.LENDO, 0);
+        int lendo = contagemPorStatus.getOrDefault(StatusLivro.LENDO, 0)
+                + contagemPorStatus.getOrDefault(StatusLivro.RELEITURA, 0);
         Integer lidosNoAno = livroRepository.countByStatusAndLidoEmBetween(StatusLivro.LIDO, inicioAno, fimAno);
 
         int lidos = (lidosNoAno != null) ? lidosNoAno : 0;

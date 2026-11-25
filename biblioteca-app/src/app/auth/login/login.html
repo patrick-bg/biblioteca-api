@@ -1,4 +1,14 @@
 <main class="auth-page">
+    <button 
+        type="button"
+        class="theme-toggle floating-theme-btn" 
+        (click)="themeService.toggleTheme()" 
+        [title]="themeService.isLightMode() ? 'Ativar modo escuro' : 'Ativar modo claro'">
+        <i class="fa-solid" 
+            [class.fa-moon]="themeService.isLightMode()" 
+            [class.fa-sun]="!themeService.isLightMode()">
+        </i>
+     </button>
     <section class="auth-panel">
         <div class="brand">
             <i class="fa-solid fa-book-open"></i>

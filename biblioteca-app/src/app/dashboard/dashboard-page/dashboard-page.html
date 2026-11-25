@@ -90,7 +90,12 @@
                     [src]="livro.urlCapa || 'assets/capa-padrao.png'" 
                     [alt]="livro.titulo"
                     class="book-cover">
-                  <span class="book-badge reading">Lendo</span>
+
+                    @if (livro.status === 'RELEITURA') {
+                      <span class="book-badge rereading">Releitura</span>
+                    }@else {
+                      <span class="book-badge reading">Lendo</span>
+                    }
                 </div>
                 <div class="book-details">
                   <strong class="book-title" [title]="livro.titulo">

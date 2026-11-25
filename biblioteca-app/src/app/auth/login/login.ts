@@ -5,6 +5,7 @@ import { AuthService } from '../auth-service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CadastroUsuarioForm, LoginForm } from '../dados-auth';
+import { ThemeService } from '../../common/components/theme-service';
 
 interface AuthForm {
   nome: FormControl<string>;
@@ -22,7 +23,7 @@ export class Login implements OnInit {
 
   form!: FormGroup<AuthForm>;
   modo: 'login' | 'cadastro' = 'login';
-
+  themeService = inject(ThemeService);
   authService = inject(AuthService);
   router = inject(Router);
   toast = inject(ToastrService);

@@ -2,6 +2,14 @@
     <h1>{{ titulo() }}</h1>
 
     <div class="user-area">
+        <button 
+            id="theme-toggle" 
+            class="theme-toggle" 
+            (click)="themeService.toggleTheme()"
+            [title]="themeService.isLightMode() ? 'Ativar modo escuro' : 'Ativar modo claro'" 
+            aria-label="Alternar tema">
+      <i class="fa-solid" [ngClass]="themeService.isLightMode() ? 'fa-moon' : 'fa-sun'"></i>
+    </button>
         <span class="user-name">Olá, {{nomeUsuarioLogado}}</span>
         <i class="fa-solid fa-circle-user"></i>
     </div>

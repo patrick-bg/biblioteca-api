@@ -17,6 +17,7 @@ export class LivroResumoCard {
     nota!: number | null;
     paginasLidas!: number;
     paginasTotais!: number;
+    status!: string;
 }
 
 

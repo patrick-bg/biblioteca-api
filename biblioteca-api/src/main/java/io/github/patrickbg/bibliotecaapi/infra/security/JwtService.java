@@ -69,6 +69,7 @@ public class JwtService {
 
         try {
             String[] partesDoToken = token.split("\\.");
+            if(partesDoToken.length != 3) return false;
             String header = partesDoToken[0];
             String payload = partesDoToken[1];
             String signature = partesDoToken[2];

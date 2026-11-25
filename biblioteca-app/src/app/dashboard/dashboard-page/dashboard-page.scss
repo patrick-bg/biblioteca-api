@@ -1,3 +1,40 @@
+:root {
+
+    /* MODO ESCURO */
+    --roxo-primario: #8b5cf6;
+    --roxo-escuro: #6d28d9;
+    --amarelo: #f59e06;
+
+    --bg-principal: #13111c;
+    --bg-superficie: #1e1b2e;
+    --bg-superficie-alt: #27233a;
+
+    --texto-principal: #e2e0ec;
+    --texto-secundario: #9b96b0;
+    --borda-sutil: #312c47;
+    --branco: #ffffff;
+    --sombra: rgba(0,0,0,0.3);
+}
+
+    /* MODO CLARO */
+[data-theme="light"]{
+    --turquesa: #4e73b9;
+    --turquesa-escuro: #2c5ab1;
+    --amarelo: #f1c40f;
+    --cinza-claro: #f4f6f8;
+    --cinza-texto: #555;
+    --branco: #ffffff;
+
+    --bg-principal: #f4f6f8;
+    --bg-superficie: #ffffff;
+    --bg-superficie-alt: #f9fafb;
+
+    --texto-principal: #333333;
+    --texto-secundario: #666666;
+    --borda-sutil: #e5e7eb;
+    --sombra: rgba(0,0,0,0.06);
+}
+
 /* Barra de filtro superior */
 .filter-bar {
     display: flex;
@@ -9,25 +46,25 @@
 .filter-select {
     padding: 8px 14px;
     border-radius: 8px;
-    border: 1px solid #dce1e6;
-    background-color: var(--branco);
-    color: #333;
+    border: 1px solid var(--borda-sutil);
+    background-color: var(--bg-superficie);
+    color: var(--texto-principal);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s;
 }
 
 .filter-select:focus {
-    border-color: var(--turquesa);
+    border-color: var(--roxo-primario);
 }
 
 /* Banner de erro */
 .error-banner {
-    background-color: #fdecea;
-    color: #e74c3c;
-    border-left: 4px solid #e74c3c;
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border-left: 4px solid #ef4444;
     padding: 14px 18px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -45,9 +82,11 @@
 
 .metric-card,
 .chart-panel {
-    background-color: var(--branco);
+    background-color: var(--bg-superficie);
+    border: 1px solid var(--borda-sutil);
     border-radius: 8px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    box-shadow: 0 6px 18px var(--sombra);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .metric-card {
@@ -60,7 +99,7 @@
 }
 
 .metric-card-reading {
-    border-left: 5px solid var(--turquesa);
+    border-left: 5px solid var(--roxo-primario);
 }
 
 .metric-card-goal {
@@ -68,7 +107,7 @@
 }
 
 .metric-label {
-    color: #777;
+    color: var(--texto-secundario);
     font-size: 13px;
     font-weight: 600;
     text-transform: uppercase;
@@ -77,24 +116,25 @@
 .metric-card strong {
     font-size: 28px;
     line-height: 1.2;
+    color: var(--texto-principal);
 }
 
 .metric-card strong.lendo {
-    color: var(--turquesa-escuro);
+    color: var(--roxo-primario);
 }
 
 .metric-card small {
-    color: #888;
+    color: var(--texto-secundario);
     font-size: 13px;
     text-transform: capitalize;
 }
 
 .metric-highlight {
-    color: var(--turquesa-escuro);
+    color: var(--roxo-primario);
 }
 
 .metric-warning {
-    color: #e74c3c;
+    color: #f87171;
 }
 
 /* Grid de Gráficos / Estatísticas */ 
@@ -118,12 +158,12 @@
 }
 
 .chart-header h2 {
-    color: var(--turquesa-escuro);
+    color: var(--roxo-primario);
     font-size: 18px;
 }
 
 .chart-header span {
-    color: #888;
+    color: var(--texto-secundario);
     font-size: 13px;
     text-transform: capitalize;
 }
@@ -152,13 +192,13 @@
 
 .comparison-label span,
 .category-label span {
-    color: #666;
+    color: var(--texto-secundario);
     font-weight: 600;
 }
 
 .comparison-label strong,
 .category-label strong {
-    color: #333;
+    color: var(--texto-principal);
     font-size: 14px;
 }
 
@@ -167,7 +207,7 @@
     width: 100%;
     height: 14px;
     border-radius: 999px;
-    background-color: #edf1f4;
+    background-color: var(--bg-superficie-alt);
     overflow: hidden;
 }
 
@@ -178,12 +218,12 @@
     transition: width 0.5s ease;
 }
 
-.bar-fill.completed  {
-    background-color: var(--turquesa);
+.bar-fill.completed {
+    background-color: var(--roxo-primario);
 }
 
-.bar-fill.abandoned  {
-    background-color: #e74c3c;
+.bar-fill.abandoned {
+    background-color: #ef4444;
 }
 
 .bar-fill.category {
@@ -198,12 +238,12 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    color: #888;
+    color: var(--texto-secundario);
     text-align: center;
 }
 
 .empty-state i {
-    color: var(--turquesa);
+    color: var(--roxo-primario);
     font-size: 32px;
 }
 
@@ -265,17 +305,17 @@
 }
 
 .books-shelf-horizontal::-webkit-scrollbar-track {
-    background: #edf1f4;
+    background: var(--bg-superficie-alt);
     border-radius: 999px;
 }
 
 .books-shelf-horizontal::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: var(--borda-sutil);
     border-radius: 999px;
 }
 
 .books-shelf-horizontal::-webkit-scrollbar-thumb:hover {
-    background: var(--turquesa);
+    background: var(--roxo-primario);
 }
 
 .book-card {
@@ -291,7 +331,7 @@
 }
 
 .book-card:hover .book-title {
-    color: var(--turquesa-escuro); 
+    color: var(--roxo-primario); 
 }
 
 .book-cover-wrapper {
@@ -300,8 +340,8 @@
     aspect-ratio: 2 / 3;
     border-radius: 6px;
     overflow: hidden;
-    background-color: #edf1f4;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-superficie-alt);
+    box-shadow: 0 4px 10px var(--sombra);
 }
 
 .book-cover {
@@ -321,21 +361,26 @@
     border-radius: 4px;
     font-size: 11px;
     font-weight: 700;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 .book-badge.rating {
     background-color: var(--amarelo);
-    color: #222;
+    color: #13111c;
 }
 
 .book-badge.reading {
-    background-color: var(--turquesa);
+    background-color: var(--roxo-primario);
+    color: var(--branco);
+}
+
+.book-badge.rereading {
+    background-color: #9333ea;
     color: var(--branco);
 }
 
 .book-badge.backlog {
-    background-color: #6c757d;
+    background-color: #4b5563;
     color: var(--branco);
 }
 
@@ -348,15 +393,16 @@
 .book-title {
     font-size: 13px;
     font-weight: 600;
-    color: #333;
+    color: var(--texto-principal);
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2; 
     -webkit-box-orient: vertical;
     overflow: hidden;
+    transition: color 0.2s;
 }
 
 .book-meta {
     font-size: 12px;
-    color: #888;
+    color: var(--texto-secundario);
 }

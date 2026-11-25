@@ -9,13 +9,13 @@
     grid-column: span 4;
 }
 
-filtro-actions {
+.filtro-actions {
     margin-top: 6px;
-    margin-bottom: 20 px;
+    margin-bottom: 20px;
 }
 
-@media (max-width: 768px){
-    .filtro-col{
+@media (max-width: 768px) {
+    .filtro-col {
         grid-column: span 12;
     }
 }

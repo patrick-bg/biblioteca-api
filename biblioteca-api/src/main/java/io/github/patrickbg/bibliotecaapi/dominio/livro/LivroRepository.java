@@ -203,7 +203,7 @@ public interface LivroRepository
             SELECT COALESCE(SUM(
                 CASE 
                     WHEN l.status = 'LIDO' THEN l.paginasTotais 
-                    WHEN l.status = 'LENDO' THEN COALESCE(l.paginasLidas, 0) 
+                    WHEN l.status IN ('LENDO', 'RELEITURA') THEN COALESCE(l.paginasLidas, 0) 
                     ELSE 0 
                 END
             ), 0L)
@@ -239,17 +239,17 @@ public interface LivroRepository
     // --- DADOS DE LIVROS ---
     @Query("""
             SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LivroResumoCard(
-                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais
+                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais, l.status
             )
             FROM LivroEntity l
-            WHERE l.status = 'LENDO'
+            WHERE l.status IN ('LENDO', 'RELEITURA')
             ORDER BY l.dataAtualizacao DESC
             """)
     List<LivroResumoCard> buscarLeiturasAtuais();
 
     @Query("""
             SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LivroResumoCard(
-                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais
+                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais, l.status
             )
             FROM LivroEntity l
             WHERE l.status = 'LIDO'
@@ -262,17 +262,18 @@ public interface LivroRepository
 
     @Query("""
             SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LivroResumoCard(
-                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais
+                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais, l.status
             )
             FROM LivroEntity l
             WHERE l.nota = 5.0
+                        AND l.status = 'LIDO'
             ORDER BY l.lidoEm DESC, l.titulo ASC
             """)
     List<LivroResumoCard> buscarLivrosNotaCinco();
 
     @Query("""
             SELECT NEW io.github.patrickbg.bibliotecaapi.dominio.dashboard.dto.LivroResumoCard(
-                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais
+                l.id, l.titulo, l.urlCapa, l.nota, l.paginasLidas, l.paginasTotais, l.status
             )
             FROM LivroEntity l
             WHERE l.status = 'BACKLOG'
