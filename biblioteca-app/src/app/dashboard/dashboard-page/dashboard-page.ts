@@ -27,7 +27,7 @@ export class DashboardPage implements OnInit{
 
   constructor() {
     const anoAtual = new Date().getFullYear();
-    for(let i = 0; i <=5; i++) {
+    for(let i = 0; i <=11; i++) {
       this.anosDisponiveis.push(anoAtual - i);
     }
   }

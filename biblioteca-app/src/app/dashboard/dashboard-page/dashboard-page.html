@@ -285,7 +285,7 @@
           
         }
       </div>
-
+      
       <!-- Estante por Gênero -->
       <div class="metric-card metric-card-reading">
         <div class="chart-header">
@@ -294,6 +294,30 @@
         </div>
         
           @for (item of dashboard.estantePorGenero; track item.categoria) {
+            <div class="comparison-chart">
+                  <div class="comparison-row">
+                    <div class="comparison-label">
+                      <span>{{ item.categoria | enumLabel}}</span>
+                      <strong> {{ item.quantidade}}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill completed"
+                    [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
+                  </div>
+                </div>
+          }
+      </div>
+
+      <!-- Estante por País do Autor -->
+      <div class="metric-card metric-card-reading">
+        <div class="chart-header">
+          <h2>Estante por país do autor</h2>
+          <span>GERAL</span>
+        </div>
+        
+          @for (item of dashboard.estantePorPaisAutor; track item.categoria) {
             <div class="comparison-chart">
                   <div class="comparison-row">
                     <div class="comparison-label">
@@ -344,31 +368,6 @@
         </div>
         
           @for (item of dashboard.estantePorIdioma; track item.categoria) {
-            <div class="comparison-chart">
-                  <div class="comparison-row">
-                    <div class="comparison-label">
-                      <span>{{ item.categoria | enumLabel}}</span>
-                      <strong> {{ item.quantidade}}</strong>
-                    </div>
-                  </div>
-                </div>
-                <div class="bar-track">
-                  <div class="bar-fill completed"
-                    [style.width.%]="percentual(item.quantidade, (dashboard.resumo.lidos + dashboard.resumo.backlog + dashboard.resumo.lendo))">
-                  </div>
-                </div>
-          }
-        
-      </div>
-
-      <!-- Estante por País do Autor -->
-      <div class="metric-card metric-card-reading">
-        <div class="chart-header">
-          <h2>Estante por país do autor</h2>
-          <span>GERAL</span>
-        </div>
-        
-          @for (item of dashboard.estantePorPaisAutor; track item.categoria) {
             <div class="comparison-chart">
                   <div class="comparison-row">
                     <div class="comparison-label">

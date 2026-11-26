@@ -13,5 +13,8 @@ public enum PaisOrigemAutor {
     RUSSIA,
     ALEMANHA,
     CANADA,
-    POLONIA
+    POLONIA,
+    ISRAEL,
+    CHILE,
+    IRLANDA
 }
